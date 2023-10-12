@@ -6,10 +6,10 @@ WORKDIR /code/api
 
 RUN npm cache verify
 RUN npm install -g npm@8.19.4
-RUN npm run db:create
-RUN npm run db:seed
-# pour tous : migration
-RUN npm run db:migrate
+# RUN npm run db:create
+# RUN npm run db:seed
+# # pour tous : migration
+# RUN npm run db:migrate
 
 WORKDIR /code/pix-editor
 
