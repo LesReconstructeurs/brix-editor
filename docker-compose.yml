@@ -15,10 +15,12 @@ services:
   #     - "6380:6379"
 
   brix-editor:
-    image: node:14.17.6
+    image: pix/editor
     build: 
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/dockerfiles/Dockerfile.editor
+      context: ../brix-editor/
     volumes:
-        - ./:/var/www
+      - ./:/code
     ports:
-      - "4300:3000"
+      - "4300:80"
+
