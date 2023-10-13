@@ -1,6 +1,8 @@
 FROM node:14.17.6 as dev
 
 USER root
+WORKDIR /code
+COPY . .
 
 # WORKDIR /code/api
 
