@@ -1,15 +1,26 @@
 version: '3'
 
 services:
-  postgres:
-    image: postgres:13.3-alpine
-    ports:
-      - "5444:5432"
-    environment:
-      POSTGRES_DB: pix_lcms
-      POSTGRES_HOST_AUTH_METHOD: trust
+  # postgres:
+  #   image: postgres:13.3-alpine
+  #   ports:
+  #     - "5444:5432"
+  #   environment:
+  #     POSTGRES_DB: pix_lcms
+  #     POSTGRES_HOST_AUTH_METHOD: trust
 
-  redis:
-    image: redis:5.0.7-alpine
+  # redis:
+  #   image: redis:5.0.7-alpine
+  #   ports:
+  #     - "6380:6379"
+
+  brix-editor:
+    image: pix/editor
+    build: 
+      dockerfile: ./docker/dockerfiles/Dockerfile.editor
+      context: ../brix-editor/
+    volumes:
+      - ./:/code
     ports:
-      - "6380:6379"
+      - "4300:80"
+
