@@ -2,10 +2,10 @@ FROM node:14.17.6 as dev
 
 USER root
 
-WORKDIR /code/api
+# WORKDIR /code/api
 
-RUN npm cache verify
-RUN npm install -g npm@8.19.4
+# RUN npm cache verify
+# RUN npm install -g npm@8.19.4
 # RUN npm run db:create
 # RUN npm run db:seed
 # # pour tous : migration

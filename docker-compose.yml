@@ -17,8 +17,8 @@ services:
   brix-editor:
     image: pix/editor
     build: 
-      dockerfile: ./docker/dockerfiles/Dockerfile.editor
-      context: ../brix-editor/
+      dockerfile: ./Dockerfile
+      context: .
     volumes:
       - ./:/code
     ports:
