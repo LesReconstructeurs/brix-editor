@@ -4,10 +4,13 @@ USER root
 WORKDIR /code
 COPY . .
 
-# WORKDIR /code/api
+WORKDIR /code/api
 
-# RUN npm cache verify
-# RUN npm install -g npm@8.19.4
+RUN npm cache verify
+RUN npm install -g npm@8.19.4
+RUN npm ci
+CMD [ "npm", "run", "start" ]
+
 # RUN npm run db:create
 # RUN npm run db:seed
 # # pour tous : migration
