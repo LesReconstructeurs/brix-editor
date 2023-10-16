@@ -23,3 +23,12 @@ services:
     ports:
       - "4300:80"
 
+  brix-editor-api:
+    image: pix/editor-api
+    build: 
+      dockerfile: ./Dockerfile.api
+    volumes:
+      - ./:/code
+    ports:
+      - "3002:80"
+
