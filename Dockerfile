@@ -4,16 +4,12 @@ USER root
 WORKDIR /code
 COPY . .
 
-# RUN npm run db:create
-# RUN npm run db:seed
-# # pour tous : migration
-# RUN npm run db:migrate
-
-WORKDIR /code/pix-editor
 
 RUN npm cache verify
 RUN npm install -g npm@6.14.15
 RUN npm ci
+
+WORKDIR /code/pix-editor
 RUN npm install -g ember-cli 
 
 CMD [ "npm", "run", "start" ]
