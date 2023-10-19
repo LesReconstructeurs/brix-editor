@@ -26,6 +26,7 @@ services:
 
   brix-editor-api:
     image: pix/editor-api
+    hostname: localhost
     build: 
       dockerfile: ./Dockerfile.api
     volumes:
