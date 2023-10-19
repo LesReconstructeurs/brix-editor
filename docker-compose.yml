@@ -30,7 +30,7 @@ services:
     build: 
       dockerfile: ./Dockerfile.api
     volumes:
-      - ./:/code
+      - ./api:/code
     ports:
       - "3002:3000"
 

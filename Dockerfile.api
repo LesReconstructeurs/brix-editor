@@ -5,7 +5,7 @@ WORKDIR /code
 COPY . .
 
 EXPOSE 3000
-WORKDIR /code/api
+
 RUN npm cache verify
 RUN npm install -g npm@8.19.4
 RUN npm install
