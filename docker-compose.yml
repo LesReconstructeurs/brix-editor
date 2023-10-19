@@ -20,7 +20,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - ./:/code
-      - ./docker-ember-nginx.conf:/etc/nginx/conf.d/default.conf
+      # - ./docker-ember-nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "4300:80"
 
