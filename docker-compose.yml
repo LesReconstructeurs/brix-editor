@@ -33,5 +33,5 @@ services:
     volumes:
       - ./:/code
     ports:
-      - "3002:3000"
+      - "3002:3002"
 
