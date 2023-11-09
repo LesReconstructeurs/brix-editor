@@ -37,3 +37,4 @@ pix-editor/app/config-private-test.js
 
 # intellij
 **/.idea
+.DS_Store
