@@ -35,3 +35,7 @@ services:
     ports:
       - "3002:3002"
 
+networks:
+   default:
+      external:
+         name: brix-and-editor-network
