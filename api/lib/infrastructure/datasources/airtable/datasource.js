@@ -12,7 +12,11 @@ const _DatasourcePrototype = {
       options.maxRecords = params.page.size;
     }
     const airtableRawObjects = await airtable.findRecords(this.tableName, options);
-    return airtableRawObjects.map(this.fromAirTableObject);
+    const listOfObjects = airtableRawObjects.map(this.fromAirTableObject);
+    return listOfObjects;
+    /*return listOfObjects.filter(row => {
+      return row !== undefined;
+    });*/
   },
 
   async filter({ filter: { ids } }) {
