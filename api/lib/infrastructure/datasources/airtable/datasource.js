@@ -13,7 +13,7 @@ const _DatasourcePrototype = {
     }
     const airtableRawObjects = await airtable.findRecords(this.tableName, options);
     const listOfObjects = airtableRawObjects.map(this.fromAirTableObject);
-    return airtableRawObjects.filter(function(row) {
+    return  listOfObjects.filter(function(row) {
       return row !== undefined;
     });
   },
