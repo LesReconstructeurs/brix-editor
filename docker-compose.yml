@@ -32,6 +32,7 @@ services:
       context: ./api/
     volumes:
       - ./api:/code
+      - /code/node_modules
     ports:
       - "3002:3002"
 

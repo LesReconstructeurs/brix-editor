@@ -1,18 +1,13 @@
 FROM node:16.20.2 as dev
 
 USER root
+WORKDIR /code
 
-RUN ["mkdir", "/install"]
-
-ADD ["./package.json", "/install"]
-WORKDIR /install
+COPY package.json /code/
 RUN npm cache verify
 RUN npm install -g npm@8.19.4
-RUN npm install --verbose
-ENV NODE_PATH=/install/node_modules
+RUN npm install 
 
-
-WORKDIR /code
 COPY . /code/
 
 CMD [ "npm", "run", "start" ]
