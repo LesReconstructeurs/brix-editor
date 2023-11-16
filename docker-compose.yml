@@ -28,10 +28,10 @@ services:
     image: pix/editor-api
     hostname: localhost
     build: 
-      dockerfile: ../Dockerfile.api
+      dockerfile: ./Dockerfile
       context: ./api/
     volumes:
-      - ./:/code
+      - ./api:/code
     ports:
       - "3002:3002"
 
