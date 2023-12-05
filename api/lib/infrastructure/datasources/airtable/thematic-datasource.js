@@ -17,6 +17,11 @@ export const thematicDatasource = datasource.extend({
   sortField: 'Nom',
 
   fromAirTableObject(airtableRecord) {
+
+    if (airtableRecord.get('Competence (id persistant)') === undefined) {
+      return;
+    }
+    
     return {
       id: airtableRecord.id,
       name_i18n: {
