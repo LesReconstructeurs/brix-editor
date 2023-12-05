@@ -1,15 +1,17 @@
-const { expect, domainBuilder, airtableBuilder, sinon } = require('../../../../test-helper');
-const challengeDatasource = require('../../../../../lib/infrastructure/datasources/airtable/challenge-datasource');
-const airtable = require('../../../../../lib/infrastructure/airtable');
-const airtableClient = require('airtable');
-const AirtableRecord = require('airtable').Record;
+import { describe, expect, it, vi } from 'vitest';
+import { domainBuilder, airtableBuilder } from '../../../../test-helper.js';
+import { challengeDatasource } from '../../../../../lib/infrastructure/datasources/airtable/challenge-datasource.js';
+import * as airtable from '../../../../../lib/infrastructure/airtable.js';
+import airtableLib from 'airtable';
+
+const { Record: AirtableRecord } = airtableLib;
 
 describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', () => {
   describe('#fromAirTableObject', () => {
 
     it('should create a Challenge from the AirtableRecord', () => {
       // given
-      const expectedChallenge = domainBuilder.buildChallengeAirtableDataObject();
+      const expectedChallenge = domainBuilder.buildChallengeDatasourceObject();
       const airtableChallenge = airtableBuilder.factory.buildChallenge(expectedChallenge);
       const challengeRecord = new AirtableRecord('Epreuves', airtableChallenge.id, airtableChallenge);
 
@@ -22,7 +24,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
 
     it('should deal with a missing timer', () => {
       // given
-      const expectedChallenge = domainBuilder.buildChallengeAirtableDataObject();
+      const expectedChallenge = domainBuilder.buildChallengeDatasourceObject();
       expectedChallenge.timer = undefined;
       const airtableChallenge = airtableBuilder.factory.buildChallenge(expectedChallenge);
       const challengeRecord = new AirtableRecord('Epreuves', airtableChallenge.id, airtableChallenge);
@@ -36,7 +38,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
 
     it('should deal with a missing competences', () => {
       // given
-      const expectedChallenge = domainBuilder.buildChallengeAirtableDataObject();
+      const expectedChallenge = domainBuilder.buildChallengeDatasourceObject();
       expectedChallenge.competenceId = undefined;
       const airtableChallenge = airtableBuilder.factory.buildChallenge(expectedChallenge);
       const challengeRecord = new AirtableRecord('Epreuves', airtableChallenge.id, airtableChallenge);
@@ -108,11 +110,12 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
       delete airtableChallenge.fields['Difficulté calculée'];
       delete airtableChallenge.fields['Discrimination calculée'];
       delete airtableChallenge.fields['updated_at'];
+      delete airtableChallenge.fields['created_at'];
     }
 
     it('should serialize a challenge to an airtable object', () => {
       // given
-      const createdChallenge = domainBuilder.buildChallengeAirtableDataObject({ locales: ['fr-fr'] });
+      const createdChallenge = domainBuilder.buildChallengeDatasourceObject({ locales: ['fr-fr'] });
       const airtableChallenge = airtableBuilder.factory.buildChallenge(createdChallenge);
       _removeReadonlyFields(airtableChallenge);
 
@@ -125,7 +128,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
 
     it('should transform boolean to `activer/désactiver` for t1, t2 and t3',() => {
       // given
-      const createdChallenge = domainBuilder.buildChallengeAirtableDataObject({ t1Status: true, t2Status: false, t3Status: null });
+      const createdChallenge = domainBuilder.buildChallengeDatasourceObject({ t1Status: true, t2Status: false, t3Status: null });
 
       // when
       const challenge = challengeDatasource.toAirTableObject(createdChallenge);
@@ -141,7 +144,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
       const locales = ['de', 'en', 'es', 'it', 'fr', 'fr-fr', 'pt'];
 
       const expectedLanguages = ['Allemand', 'Anglais', 'Espagnol', 'Italie', 'Francophone', 'Franco Français', 'Portugais'];
-      const createdChallenge = domainBuilder.buildChallengeAirtableDataObject({ locales });
+      const createdChallenge = domainBuilder.buildChallengeDatasourceObject({ locales });
 
       // when
       const challenge = challengeDatasource.toAirTableObject(createdChallenge);
@@ -154,7 +157,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
       // given
       const locales = ['fr-be'];
 
-      const createdChallenge = domainBuilder.buildChallengeAirtableDataObject({ locales });
+      const createdChallenge = domainBuilder.buildChallengeDatasourceObject({ locales });
 
       // when
       const toThrow = function() {
@@ -174,15 +177,15 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
         skills: [],
         attachments: [],
       });
-      const challengeRecord = new airtableClient.Record('Epreuves', challenge.id, challenge);
+      const challengeRecord = new AirtableRecord('Epreuves', challenge.id, challenge);
 
-      sinon.stub(airtable, 'findRecords')
-        .withArgs('Epreuves', { filterByFormula: '{id persistant} = \'recChallenge\'', maxRecords: 1 })
-        .resolves([challengeRecord]);
+      const airtableFindRecordsSpy = vi.spyOn(airtable, 'findRecords')
+        .mockResolvedValue([challengeRecord]);
 
       const newChallenge = await challengeDatasource.filterById('recChallenge');
 
       expect(newChallenge.id).to.equal('recChallenge');
+      expect(airtableFindRecordsSpy).toHaveBeenCalledWith('Epreuves', { filterByFormula: '{id persistant} = \'recChallenge\'', maxRecords: 1 });
     });
   });
 
@@ -194,27 +197,27 @@ describe('Unit | Infrastructure | Datasource | Airtable | ChallengeDatasource', 
         skills: [],
         attachments: [],
       });
-      const challengeRecord = new airtableClient.Record('Epreuves', challenge.id, challenge);
+      const challengeRecord = new AirtableRecord('Epreuves', challenge.id, challenge);
 
-      sinon.stub(airtable, 'findRecords')
-        .resolves([ challengeRecord ]);
+      vi.spyOn(airtable, 'findRecords')
+        .mockResolvedValue([ challengeRecord ]);
 
       challengeDatasource.usedFields = Symbol('used fields');
       const challenges = await challengeDatasource.search({ filter: { search: 'query term' } });
 
-      expect(airtable.findRecords).to.be.calledWith('Epreuves', { fields: challengeDatasource.usedFields, filterByFormula: 'AND(FIND(\'query term\', LOWER(CONCATENATE(Consigne,Propositions,{Embed URL}))) , Statut != \'archive\')' });
+      expect(airtable.findRecords).toHaveBeenCalledWith('Epreuves', { fields: challengeDatasource.usedFields, filterByFormula: 'AND(FIND(\'query term\', LOWER(CONCATENATE(Consigne,Propositions,{Embed URL}))) , Statut != \'archive\')' });
       expect(challenges.length).to.equal(1);
       expect(challenges[0].id).to.equal('recChallenge');
     });
 
     it('should escape the query', async () => {
-      sinon.stub(airtable, 'findRecords')
-        .resolves([]);
+      vi.spyOn(airtable, 'findRecords')
+        .mockResolvedValue([]);
 
       challengeDatasource.usedFields = Symbol('used fields');
       await challengeDatasource.search({ filter: { search: 'query \' term' } });
 
-      expect(airtable.findRecords).to.be.calledWith('Epreuves', { fields: challengeDatasource.usedFields, filterByFormula: 'AND(FIND(\'query \\\' term\', LOWER(CONCATENATE(Consigne,Propositions,{Embed URL}))) , Statut != \'archive\')' });
+      expect(airtable.findRecords).toHaveBeenCalledWith('Epreuves', { fields: challengeDatasource.usedFields, filterByFormula: 'AND(FIND(\'query \\\' term\', LOWER(CONCATENATE(Consigne,Propositions,{Embed URL}))) , Statut != \'archive\')' });
     });
   });
 });

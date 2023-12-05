@@ -1,22 +1,30 @@
-const showdown = require('showdown');
-const _ = require('lodash');
-const urlRegex = require('url-regex-safe');
-const axios = require('axios');
-const { wrapper } = require('axios-cookiejar-support');
-const { CookieJar } = require('tough-cookie');
+import showdown from 'showdown';
+import _ from 'lodash';
+import urlRegex from 'url-regex-safe';
+import axios from 'axios';
+import { wrapper } from 'axios-cookiejar-support';
+import { CookieJar } from 'tough-cookie';
 
-const logger = require('../../infrastructure/logger');
+import { logger } from '../../infrastructure/logger.js';
 
-function getLiveChallenges(release) {
+export function getLiveChallenges(release) {
   return release.challenges.filter((challenge) => challenge.status !== 'périmé');
 }
 
-function findUrlsInstructionFromChallenge(challenge) {
+export function findUrlsInstructionFromChallenge(challenge) {
   return findUrlsInMarkdown(challenge.instruction || '');
 }
 
-function findUrlsProposalsFromChallenge(challenge) {
+export function findUrlsProposalsFromChallenge(challenge) {
   return findUrlsInMarkdown(challenge.proposals || '');
+}
+
+export function findUrlsSolutionFromChallenge(challenge) {
+  return findUrlsInMarkdown(challenge.solution || '');
+}
+
+export function findUrlsSolutionToDisplayFromChallenge(challenge) {
+  return findUrlsInMarkdown(challenge.solutionToDisplay || '');
 }
 
 function cleanUrl(url) {
@@ -34,7 +42,7 @@ function prependProtocol(url) {
   return url;
 }
 
-function findUrlsInMarkdown(value) {
+export function findUrlsInMarkdown(value) {
   const converter = new showdown.Converter();
   const html = converter.makeHtml(value);
   const urls = html.match(urlRegex({ strict: true }));
@@ -42,6 +50,28 @@ function findUrlsInMarkdown(value) {
     return [];
   }
   return _.uniq(urls.map(cleanUrl).map(prependProtocol));
+}
+
+function findCompetenceNameFromChallenge(challenge, release) {
+  const skill = release.skills.find(({ id }) => challenge.skillId === id);
+  if (!skill) return '';
+  return findCompetenceNameFromSkill(skill, release);
+}
+
+function findCompetencesNameFromTutorial(tutorial, release) {
+  const skills = release.skills.filter((skill) => {
+    return skill.tutorialIds.includes(tutorial.id) ||
+      skill.learningMoreTutorialIds.includes(tutorial.id);
+  });
+  const competenceNames =  _.uniq(skills.map((skill) => skill ? findCompetenceNameFromSkill(skill, release) : ''));
+  return competenceNames.join(' ');
+}
+
+function findCompetenceNameFromSkill(skill, release) {
+  const tube = release.tubes.find(({ id }) => skill.tubeId === id);
+  if (!tube) return '';
+  const competence = release.competences.find(({ id }) => tube.competenceId === id);
+  return competence?.name_i18n.fr || '';
 }
 
 function findSkillsNameFromChallenge(challenge, release) {
@@ -57,25 +87,27 @@ function findSkillsNameFromTutorial(tutorial, release) {
   return skills.map((s) => s.name).join(' ');
 }
 
-function findUrlsFromChallenges(challenges, release) {
+export function findUrlsFromChallenges(challenges, release) {
   return challenges.flatMap((challenge) => {
     const functions = [
       findUrlsInstructionFromChallenge,
-      findUrlsProposalsFromChallenge
+      findUrlsProposalsFromChallenge,
+      findUrlsSolutionFromChallenge,
+      findUrlsSolutionToDisplayFromChallenge
     ];
     const urls = functions
       .flatMap((fun) => fun(challenge))
       .map((url) => {
-        return { id: [findSkillsNameFromChallenge(challenge, release), challenge.id, challenge.status].join(';'), url };
+        return { id: [findCompetenceNameFromChallenge(challenge, release), findSkillsNameFromChallenge(challenge, release), challenge.id, challenge.status].join(';'), url };
       });
 
     return _.uniqBy(urls, 'url');
   });
 }
 
-function findUrlsFromTutorials(tutorials, release) {
+export function findUrlsFromTutorials(tutorials, release) {
   return tutorials.map((tutorial) => {
-    return { id: [findSkillsNameFromTutorial(tutorial, release), tutorial.id].join(';'), url: tutorial.link };
+    return { id: [findCompetencesNameFromTutorial(tutorial, release), findSkillsNameFromTutorial(tutorial, release), tutorial.id].join(';'), url: tutorial.link };
   });
 }
 
@@ -125,7 +157,7 @@ async function analyze(lines, options) {
   return newLines;
 }
 
-async function checkUrl(url, config) {
+export async function checkUrl(url, config) {
   const jar = new CookieJar();
   const client = wrapper(axios.create({ jar }));
   try {
@@ -143,7 +175,7 @@ function getDataToUpload(analyzedLines) {
   });
 }
 
-async function validateUrlsFromRelease({ releaseRepository, urlErrorRepository }) {
+export async function validateUrlsFromRelease({ releaseRepository, urlErrorRepository }) {
   const release = await releaseRepository.getLatestRelease();
 
   await checkAndUploadKOUrlsFromChallenges(release, { urlErrorRepository });
@@ -169,14 +201,3 @@ async function checkAndUploadKOUrlsFromTutorials(release, { urlErrorRepository }
   const dataToUpload = getDataToUpload(analyzedLines);
   await urlErrorRepository.updateTutorials(dataToUpload);
 }
-
-module.exports = {
-  checkUrl,
-  validateUrlsFromRelease,
-  getLiveChallenges,
-  findUrlsInMarkdown,
-  findUrlsInstructionFromChallenge,
-  findUrlsProposalsFromChallenge,
-  findUrlsFromChallenges,
-  findUrlsFromTutorials,
-};

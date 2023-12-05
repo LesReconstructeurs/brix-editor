@@ -1,12 +1,12 @@
-const buildArea = require('./build-area-airtable-data-object');
-const buildCompetence = require('./build-competence-airtable-data-object');
-const buildChallenge = require('./build-challenge-airtable-data-object');
-const buildTube = require('./build-tube-airtable-data-object');
-const buildCourse = require('./build-course-airtable-data-object');
-const buildSkill = require('./build-skill-airtable-data-object');
-const buildTutorial = require('./build-tutorial-airtable-data-object');
+import { buildAreaDatasourceObject as buildArea } from './datasource-objects/build-area-datasource-object.js';
+import { buildCompetenceDatasourceObject as buildCompetence } from './datasource-objects/build-competence-datasource-object.js';
+import { buildChallengeDatasourceObject as buildChallenge } from './datasource-objects/build-challenge-datasource-object.js';
+import { buildTubeDatasourceObject as buildTube } from './datasource-objects/build-tube-datasource-object.js';
+import { buildCoursePostgresDataObject as buildCourse } from './build-course-postgres-data-object.js';
+import { buildSkillDatasourceObject as buildSkill } from './datasource-objects/build-skill-datasource-object.js';
+import { buildTutorialDatasourceObject as buildTutorial } from './datasource-objects/build-tutorial-datasource-object.js';
 
-module.exports = function buildRelease() {
+export function buildRelease() {
   const area = buildArea({
     code: '1',
     color: 'jaffa',
@@ -17,7 +17,7 @@ module.exports = function buildRelease() {
   const competence = buildCompetence({
     id: 'recsvLz0W2ShyfD63',
     name: 'Mener une recherche et une veille d’information',
-    index:  '1.1',
+    index: '1.1',
     description: '1.1 Mener une recherche et une veille d’information',
     skillIds: [],
     area
@@ -32,4 +32,4 @@ module.exports = function buildRelease() {
     skills: [buildSkill()],
     tutorials: [buildTutorial()],
   };
-};
+}

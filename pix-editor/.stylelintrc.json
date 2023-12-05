@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "@1024pix/stylelint-config"
+  ],
+  "rules": {
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "no-descending-specificity": null,
+    "number-max-precision": null,
+    "scss/at-extend-no-missing-placeholder": null,
+    "selector-id-pattern": null
+  }
+}

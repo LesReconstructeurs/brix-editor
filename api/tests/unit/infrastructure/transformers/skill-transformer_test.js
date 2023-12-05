@@ -1,10 +1,11 @@
-const { expect, domainBuilder } = require('../../../test-helper');
-const { filterSkillsFields } = require('../../../../lib/infrastructure/transformers/skill-transformer');
+import { describe, expect, it } from 'vitest';
+import { domainBuilder } from '../../../test-helper.js';
+import { filterSkillsFields } from '../../../../lib/infrastructure/transformers/skill-transformer.js';
 
 describe('Unit | Infrastructure | skill-transformer', function() {
 
   it('should only keep useful fields', function() {
-    const airtableSkills = [domainBuilder.buildSkillAirtableDataObject()];
+    const airtableSkills = [domainBuilder.buildSkillDatasourceObject()];
 
     const skills = filterSkillsFields(airtableSkills);
 

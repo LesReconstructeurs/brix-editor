@@ -1,5 +1,5 @@
-const buildChallenge = function buildChallenge({
-  id,
+export function buildChallenge({
+  id = 'challid1',
   instruction,
   proposals,
   type,
@@ -20,7 +20,7 @@ const buildChallenge = function buildChallenge({
   autoReply,
   locales,
   alternativeInstruction,
-  airtableId,
+  airtableId = 'chalairtableid',
   skills,
   genealogy,
   pedagogy,
@@ -38,7 +38,12 @@ const buildChallenge = function buildChallenge({
   delta,
   alpha,
   updatedAt,
-}) {
+  validatedAt,
+  archivedAt,
+  madeObsoleteAt,
+  createdAt = '1986-14-07',
+  shuffled,
+} = {}) {
   return {
     id: airtableId,
     'fields': {
@@ -81,9 +86,14 @@ const buildChallenge = function buildChallenge({
       'Difficulté calculée': delta ? delta.toString() : '',
       'Discrimination calculée': alpha ? alpha.toString() : '',
       'updated_at': updatedAt,
+      'validated_at': validatedAt,
+      'archived_at': archivedAt,
+      'made_obsolete_at': madeObsoleteAt,
+      'created_at': createdAt,
+      'shuffled': shuffled,
     },
   };
-};
+}
 
 function _convertStatusFromBoolToString(status) {
   return status ? 'Activé' : 'Désactivé';
@@ -102,5 +112,3 @@ function _convertLocalesToLanguages(locales) {
     }
   });
 }
-
-module.exports = buildChallenge;

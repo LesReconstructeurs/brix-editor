@@ -36,6 +36,10 @@ export default class ChallengeModel extends Model {
   @attr autoReply;
   @attr focusable;
   @attr('date') updatedAt;
+  @attr('date') validatedAt;
+  @attr('date') archivedAt;
+  @attr('date') madeObsoleteAt;
+  @attr('boolean') shuffled;
 
   @belongsTo('skill') skill;
   @hasMany('attachment', { inverse: 'challenge' }) files;
@@ -210,16 +214,19 @@ export default class ChallengeModel extends Model {
 
   archive() {
     this.status = 'archivé';
+    this.archivedAt = new Date();
     return this.save();
   }
 
   obsolete() {
     this.status = 'périmé';
+    this.madeObsoleteAt = new Date();
     return this.save();
   }
 
   validate() {
     this.status = 'validé';
+    this.validatedAt = new Date();
     return this.save();
   }
 

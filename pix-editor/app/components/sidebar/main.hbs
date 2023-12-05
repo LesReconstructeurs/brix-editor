@@ -1,24 +1,32 @@
-<div class="ui inverted left wide sidebar {{if @open "visible "}}main-sidebar menu vertical {{if this.config.lite "lite" ""}}">
-  <h1 class="header">Brix Editor</h1>
+<div class="ui inverted left wide sidebar {{if @open "visible "}}main-sidebar menu vertical {{if this.config.lite "lite"
+                                                                                                 ""}}">
+  <h1 class="header">Pix Editor</h1>
   <p class="legal-mention" style="margin: 0;">Confidentiel - secret - ne pas divulguer</p>
   <Sidebar::Search @displaySearch={{this.maySearch}} @close={{@close}} />
   <Sidebar::Navigation @displayFrameworkList={{this.maySwitchFramework}} @areas={{this.areas}} @close={{@close}}/>
   <div class="secondary-links">
+    {{#if this.mayAccessStaticCourses}}
+      <LinkTo @route="authenticated.static-courses" {{on "click" @close}}>
+        <FaIcon @icon="sheet-plastic" @prefix="fas"></FaIcon>
+        Tests statiques
+      </LinkTo>
+    {{/if}}
     {{#if this.mayGenerateTargetProfile}}
-      <LinkTo data-test-target-profile-link @route="target-profile" {{on "click" @close}}>
+      <LinkTo data-test-target-profile-link @route="authenticated.target-profile" {{on "click" @close}}>
         <i class="crosshairs icon"></i> Générateur de profil cible
       </LinkTo>
     {{/if}}
     <Sidebar::Export @areas={{this.areas}}/>
-    <LinkTo @route="statistics" {{on "click" @close}}>
+    <LinkTo @route="authenticated.statistics" {{on "click" @close}}>
       <i class="chart bar icon"></i> Statistiques
     </LinkTo>
     <div class="secondary-links">
-      <LinkTo data-test-link-to-event-log @route="events-log"><i class="book icon"></i> Journal</LinkTo>
+      <LinkTo data-test-link-to-event-log @route="authenticated.events-log"><i class="book icon"></i> Journal</LinkTo>
     </div>
   </div>
   <div class="ui labelled icon menu">
-    <button class="ui button item" type="button" {{on "click" @openLogout}}><i class="logout icon"></i>Déconnexion</button>
+    <button class="ui button item" type="button" {{on "click" @openLogout}}><i class="logout icon"></i>Déconnexion
+    </button>
     <div class="right item">
       {{#if this.author}}
         {{this.author}} -

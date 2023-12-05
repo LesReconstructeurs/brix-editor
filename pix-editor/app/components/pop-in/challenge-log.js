@@ -20,11 +20,17 @@ export default class PopinChallengeLog extends Component {
 
   notes = A([]);
   changelogEntries = A([]);
-  
+
   constructor() {
     super (...arguments);
     this._loadNotes();
     this._loadChangelog();
+  }
+
+  get title() {
+    return this.args.challenge
+      ? `Journal de ${this.args.challenge.skillName}`
+      : 'no_title';
   }
 
   get ownNotes() {
@@ -35,10 +41,6 @@ export default class PopinChallengeLog extends Component {
       const author = this.config.author;
       return notes.filter(note => note.author === author);
     }
-  }
-
-  get changelogEntries() {
-    return this.changelogEntries;
   }
 
   get ownCount() {
@@ -135,7 +137,7 @@ export default class PopinChallengeLog extends Component {
         });
     }
   }
-  
+
   _loadChangelog() {
     this.changelogLoaded = false;
     const challenge = this.args.challenge;

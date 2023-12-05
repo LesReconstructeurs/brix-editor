@@ -6,18 +6,15 @@ import { later } from '@ember/runloop';
 import { setupMirage } from 'ember-cli-mirage/test-support';
 import { selectFiles } from 'ember-file-upload/test-support';
 import Service from '@ember/service';
-import { mockAuthService } from '../../mock-auth';
+import { authenticateSession } from 'ember-simple-auth/test-support';
 
 module('Acceptance | Modify-Challenge-Attachment', function(hooks) {
   setupApplicationTest(hooks);
   setupMirage(hooks);
-  let apiKey;
 
   hooks.beforeEach(function() {
     this.server.create('config', 'default');
-    apiKey = 'valid-api-key';
-    mockAuthService.call(this, apiKey);
-    this.server.create('user', { apiKey, trigram: 'ABC' });
+    this.server.create('user', { trigram: 'ABC' });
 
     this.server.create('challenge', { id: 'recChallenge1', airtableId: 'airtableId1' });
     this.server.create('skill', { id: 'recSkill1', challengeIds: ['recChallenge1'] });
@@ -31,6 +28,7 @@ module('Acceptance | Modify-Challenge-Attachment', function(hooks) {
     this.server.create('area', { id: 'recArea1', name: '1. Information et données', code: '1', competenceIds: ['recCompetence1.1'] });
     this.server.create('area', { id: 'recArea2', name: '2. Communication et collaboration', code: '2', competenceIds: ['recCompetence2.1'] });
     this.server.create('framework', { id: 'recFramework1', name: 'Pix', areaIds: ['recArea1', 'recArea2'] });
+    return authenticateSession();
   });
 
   test('adding attachments', async function(assert) {
@@ -64,7 +62,7 @@ module('Acceptance | Modify-Challenge-Attachment', function(hooks) {
     assert.dom('[data-test-main-message]').hasText('Épreuve mise à jour');
     assert.ok(storageServiceStub.uploadFile.calledOnce);
     assert.ok(attachments.every(record => !record.isNew));
-    assert.equal(attachments.length, 1);
+    assert.strictEqual(attachments.length, 1);
   });
 
   test('delete attachment', async function(assert) {
@@ -98,7 +96,7 @@ module('Acceptance | Modify-Challenge-Attachment', function(hooks) {
 
     // then
     assert.dom('[data-test-main-message]').hasText('Épreuve mise à jour');
-    assert.equal(attachments.length, 0);
+    assert.strictEqual(attachments.length, 0);
     assert.ok(attachments.every(record => !record.isDeleted));
   });
 
@@ -131,7 +129,7 @@ module('Acceptance | Modify-Challenge-Attachment', function(hooks) {
 
     // then
     assert.dom('[data-test-main-message]').hasText('Modification annulée');
-    assert.equal(attachments.length, 1);
+    assert.strictEqual(attachments.length, 1);
     assert.ok(attachments.every(record => !record.isDeleted));
   });
 });

@@ -1,5 +1,353 @@
 
 
+## v3.95.1 (15/09/2023)
+
+
+### :bug: Correction
+- [#293](https://github.com/1024pix/pix-editor/pull/293) [BUGFIX] Corriger les jobs planifiés avec le passage à ESM.
+
+## v3.95.0 (14/09/2023)
+
+
+### :building_construction: Tech
+- [#278](https://github.com/1024pix/pix-editor/pull/278) [TECH] Migration API PixEditor en ESM (PIX-9135).
+
+### :arrow_up: Montée de version
+- [#289](https://github.com/1024pix/pix-editor/pull/289) [BUMP] Update dependency @adminjs/hapi to v7 (api).
+- [#283](https://github.com/1024pix/pix-editor/pull/283) [BUMP] Update dependency @1024pix/ember-testing-library to ^0.8.0 (pix-editor).
+- [#284](https://github.com/1024pix/pix-editor/pull/284) [BUMP] Update browser-tools orb to v1.4.5 (.circleci).
+- [#279](https://github.com/1024pix/pix-editor/pull/279) [BUMP] Update dependency p-queue to v7.4.1 (pix-editor).
+- [#281](https://github.com/1024pix/pix-editor/pull/281) [BUMP] Update dependency stylelint-config-standard-scss to v11 (pix-editor).
+- [#280](https://github.com/1024pix/pix-editor/pull/280) [BUMP] Update dependency ember-truth-helpers to v4 (pix-editor).
+
+### :coffee: Autre
+- [#287](https://github.com/1024pix/pix-editor/pull/287) [DOC] ADR "Choix d'un framework de test backend" (PIX-9155).
+- [#285](https://github.com/1024pix/pix-editor/pull/285) [DOC] ADR "Modulariser le code NodeJS" (PIX-9154).
+
+## v3.94.0 (08/09/2023)
+
+
+### :rocket: Amélioration
+- [#271](https://github.com/1024pix/pix-editor/pull/271) [FEATURE] Supprimer l'usage des traductions de compétence de Airtable (PIX-9013).
+
+### :building_construction: Tech
+- [#277](https://github.com/1024pix/pix-editor/pull/277) [TECH] Refactorisation des builders et modèles domaines de l'API (PIX-9124).
+- [#122](https://github.com/1024pix/pix-editor/pull/122) [TECH] Clarifier la procédure d'installation.
+- [#275](https://github.com/1024pix/pix-editor/pull/275) [TECH] Supprimer la colonne "imageUrl" de la table des tests statiques, attribut non utilisé (PIX-9080).
+- [#200](https://github.com/1024pix/pix-editor/pull/200) [TECH] Remplacer Cypress par Playwright (PIX-9025).
+
+### :bug: Correction
+- [#274](https://github.com/1024pix/pix-editor/pull/274) [BUGFIX] Logs d'erreur à tort lors de l'enregistrement de traductions (PIX-9077).
+
+### :arrow_up: Montée de version
+- [#276](https://github.com/1024pix/pix-editor/pull/276) [BUMP] Update dependency p-queue to v7.4.0 (pix-editor).
+- [#273](https://github.com/1024pix/pix-editor/pull/273) [BUMP] Update redis Docker tag to v7.
+- [#270](https://github.com/1024pix/pix-editor/pull/270) [BUMP] Lock file maintenance (dossier racine).
+- [#268](https://github.com/1024pix/pix-editor/pull/268) [BUMP] Update browser-tools orb to v1.4.4 (.circleci).
+- [#272](https://github.com/1024pix/pix-editor/pull/272) [BUMP] Update dependency eslint to v8.48.0.
+- [#269](https://github.com/1024pix/pix-editor/pull/269) [BUMP] Lock file maintenance (api).
+
+## v3.93.0 (04/09/2023)
+
+
+### :rocket: Amélioration
+- [#265](https://github.com/1024pix/pix-editor/pull/265) [FEATURE] Adapter les seeds pour insérer les traductions dans la base PG (PIX-8986).
+- [#263](https://github.com/1024pix/pix-editor/pull/263) [FEATURE] Renseigner les traductions de Compétences pour la réplication via la table PG `translations`(PIX-8973).
+- [#260](https://github.com/1024pix/pix-editor/pull/260) [FEATURE] Adapter la release pour insérer les translations de PG (PIX-8706).
+- [#257](https://github.com/1024pix/pix-editor/pull/257) [FEATURE] Permettre d'afficher dans PixEditor les traductions d'une compétence (PIX-8686).
+
+### :building_construction: Tech
+- [#254](https://github.com/1024pix/pix-editor/pull/254) [TECH] Utiliser eslint-plugin-n plutôt que eslint-plugin-node.
+
+### :bug: Correction
+- [#267](https://github.com/1024pix/pix-editor/pull/267) [BUGFIX] Erreur quand on vérifie la table translation (Airtable) avec un PAT (PIX-9033).
+- [#266](https://github.com/1024pix/pix-editor/pull/266) [BUGFIX] Problème d'enregistrement de compétence incomplète lorsque la description n'est pas renseignée (PIX-9026).
+- [#261](https://github.com/1024pix/pix-editor/pull/261) [BUGFIX] Ne pas appeler `process.exit` dans les tests (PIX-9015).
+- [#259](https://github.com/1024pix/pix-editor/pull/259) [BUGFIX] Changer le suffixe des traductions des compétences.
+
+### :arrow_up: Montée de version
+- [#264](https://github.com/1024pix/pix-editor/pull/264) [BUMP] Update dependency ember-simple-auth to v6 (pix-editor).
+- [#258](https://github.com/1024pix/pix-editor/pull/258) [BUMP] Update dependency googleapis to v126 (api).
+- [#262](https://github.com/1024pix/pix-editor/pull/262) [BUMP] Update dependency ember-cli-babel to v8 (pix-editor).
+
+## v3.92.0 (25/08/2023)
+
+
+### :rocket: Amélioration
+- [#255](https://github.com/1024pix/pix-editor/pull/255) [FEATURE] Récupérer et sauvegarder les traductions des compétences depuis airtable (PIX-8705).
+
+### :arrow_up: Montée de version
+- [#256](https://github.com/1024pix/pix-editor/pull/256) [BUMP] Lock file maintenance (pix-editor).
+
+## v3.91.0 (23/08/2023)
+
+
+### :rocket: Amélioration
+- [#246](https://github.com/1024pix/pix-editor/pull/246) [FEATURE] Stocker les traductions d'une nouvelle compétence (PIX-8687).
+
+### :arrow_up: Montée de version
+- [#252](https://github.com/1024pix/pix-editor/pull/252) [BUMP] Lock file maintenance (api).
+- [#250](https://github.com/1024pix/pix-editor/pull/250) [BUMP] Update dependency googleapis to v125 (api).
+- [#251](https://github.com/1024pix/pix-editor/pull/251) [BUMP] Update dependency url-regex-safe to v4 (api).
+- [#248](https://github.com/1024pix/pix-editor/pull/248) [BUMP] Update dependency googleapis to v124 (api).
+- [#244](https://github.com/1024pix/pix-editor/pull/244) [BUMP] Update dependency node to v18.17.1.
+- [#245](https://github.com/1024pix/pix-editor/pull/245) [BUMP] Update dependency eslint to v8.47.0.
+
+## v3.90.0 (22/08/2023)
+
+
+### :rocket: Amélioration
+- [#243](https://github.com/1024pix/pix-editor/pull/243) [FEATURE] Faire que le lien vers le test statique soit dirigé vers l'environnement de production (PIX-8949).
+- [#235](https://github.com/1024pix/pix-editor/pull/235) [FEATURE] N'afficher que les tests statiques actifs par défaut et permettre à l'utilisateur de pouvoir tous les afficher (PIX-8648).
+- [#234](https://github.com/1024pix/pix-editor/pull/234) [FEATURE] Pouvoir renseigner un commentaire lors de la désactivation d'un test statique et écrire ce commentaire à côté du statut (PIX-8647).
+- [#233](https://github.com/1024pix/pix-editor/pull/233) [FEATURE] Ajouter un lien de prévisualisation de l'épreuve dans la liste des épreuves sur la page de détails d'un test statique (PIX-8515).
+
+### :building_construction: Tech
+- [#240](https://github.com/1024pix/pix-editor/pull/240) [TECH] Récupérer la déclinaison du challenge (PIX-7702).
+
+## v3.89.0 (11/08/2023)
+
+
+### :rocket: Amélioration
+- [#232](https://github.com/1024pix/pix-editor/pull/232) [FEATURE] Ajouter l'information de statut d'un test statique dans la release afin que cette information puisse être exploitée côté Pix (PIX-8900).
+
+### :arrow_up: Montée de version
+- [#236](https://github.com/1024pix/pix-editor/pull/236) [BUMP] Update dependency eslint to v8.46.0.
+- [#237](https://github.com/1024pix/pix-editor/pull/237) [BUMP] Update dependency @1024pix/pix-ui to v39 (pix-editor).
+- [#223](https://github.com/1024pix/pix-editor/pull/223) [BUMP] Update dependency ember-sortable to v5 (pix-editor).
+- [#225](https://github.com/1024pix/pix-editor/pull/225) [BUMP] Update dependency eslint-plugin-qunit to v8 (pix-editor).
+
+## v3.88.0 (10/08/2023)
+
+
+### :rocket: Amélioration
+- [#228](https://github.com/1024pix/pix-editor/pull/228) [FEATURE] Pouvoir désactiver un test statique (PIX-7798).
+
+### :bug: Correction
+- [#231](https://github.com/1024pix/pix-editor/pull/231) [BUGFIX]  Inverser l'ordre des challenges des tests statiques(PIX-8898).
+
+## v3.87.0 (08/08/2023)
+
+
+### :rocket: Amélioration
+- [#227](https://github.com/1024pix/pix-editor/pull/227) [FEATURE] Afficher le statut du test statique sur la liste des tests statiques et sur la page de détails d'un test statique (PIX-8643).
+- [#226](https://github.com/1024pix/pix-editor/pull/226) [FEATURE] Faire en sorte qu'un test statique nouvellement créé soit actif par défaut (PIX-8567).
+- [#170](https://github.com/1024pix/pix-editor/pull/170) [FEATURE] Migrer les tests statiques de Airtable vers Postgres (PIX-7793).
+
+### :building_construction: Tech
+- [#172](https://github.com/1024pix/pix-editor/pull/172) [TECH] Correction du champ license des package.json.
+- [#215](https://github.com/1024pix/pix-editor/pull/215) [TECH] Ajout d'un script pour peupler les champs alpha et delta des challenges à partir d'un CSV.
+- [#206](https://github.com/1024pix/pix-editor/pull/206) [TECH] Spécifie les version de ember-source et d'ember-data qui fonctionnent.
+- [#167](https://github.com/1024pix/pix-editor/pull/167) [TECH] :green_heart: Déclarer les environnements CircleCI dans des executors.
+- [#155](https://github.com/1024pix/pix-editor/pull/155) [TECH] Upgrade embroider en v3.
+
+### :arrow_up: Montée de version
+- [#230](https://github.com/1024pix/pix-editor/pull/230) [BUMP] Update dependency @fortawesome/ember-fontawesome to v1 (pix-editor).
+- [#229](https://github.com/1024pix/pix-editor/pull/229) [BUMP] Update redis to v7 (major).
+- [#222](https://github.com/1024pix/pix-editor/pull/222) [BUMP] Update dependency ember-resolver to v11 (pix-editor).
+- [#208](https://github.com/1024pix/pix-editor/pull/208) [BUMP] Update dependency ember-source to ~4.12.0 (pix-editor).
+- [#219](https://github.com/1024pix/pix-editor/pull/219) [BUMP] Update dependency cypress to v9 (end-to-end-tests).
+- [#220](https://github.com/1024pix/pix-editor/pull/220) [BUMP] Update dependency ember-cli to v5 (pix-editor).
+- [#197](https://github.com/1024pix/pix-editor/pull/197) [BUMP] Update dependency @1024pix/stylelint-config to v4 (pix-editor).
+- [#218](https://github.com/1024pix/pix-editor/pull/218) [BUMP] Update dependency cypress to v8 (end-to-end-tests).
+- [#216](https://github.com/1024pix/pix-editor/pull/216) [BUMP] Update dependency node to v18.
+- [#211](https://github.com/1024pix/pix-editor/pull/211) [BUMP] Update dependency cypress to v7 (end-to-end-tests).
+- [#214](https://github.com/1024pix/pix-editor/pull/214) [BUMP] Update dependency ember-resolver to v10 (pix-editor).
+- [#213](https://github.com/1024pix/pix-editor/pull/213) [BUMP] Update dependency ember-aria-tabs to v7 (pix-editor).
+- [#212](https://github.com/1024pix/pix-editor/pull/212) [BUMP] Update dependency ember-a11y-accordion to v3 (pix-editor).
+- [#209](https://github.com/1024pix/pix-editor/pull/209) [BUMP] Lock file maintenance (pix-editor).
+- [#205](https://github.com/1024pix/pix-editor/pull/205) [BUMP] Update dependency ember-resolver to v9 (pix-editor).
+- [#204](https://github.com/1024pix/pix-editor/pull/204) [BUMP] Update dependency eslint-plugin-qunit to v7 (pix-editor).
+- [#203](https://github.com/1024pix/pix-editor/pull/203) [BUMP] Update dependency ember-qunit to v6 (pix-editor).
+- [#199](https://github.com/1024pix/pix-editor/pull/199) [BUMP] Update dependency p-map to v6 (api).
+- [#196](https://github.com/1024pix/pix-editor/pull/196) [BUMP] Update dependency url-regex-safe to v3 (api).
+- [#191](https://github.com/1024pix/pix-editor/pull/191) [BUMP] Update dependency axios-cookiejar-support to v4 (api).
+- [#190](https://github.com/1024pix/pix-editor/pull/190) [BUMP] Update dependency stylelint to v15 (pix-editor).
+- [#189](https://github.com/1024pix/pix-editor/pull/189) [BUMP] Update dependency axios to v1 (scripts).
+- [#188](https://github.com/1024pix/pix-editor/pull/188) [BUMP] Update dependency axios to v1 (api).
+- [#187](https://github.com/1024pix/pix-editor/pull/187) [BUMP] Update dependency faker to v6 (api).
+- [#183](https://github.com/1024pix/pix-editor/pull/183) [BUMP] Update dependency eslint-plugin-mocha to v10 (scripts).
+- [#182](https://github.com/1024pix/pix-editor/pull/182) [BUMP] Update dependency eslint-plugin-mocha to v10 (api).
+- [#181](https://github.com/1024pix/pix-editor/pull/181) [BUMP] Update dependency mocha to v10 (scripts).
+- [#180](https://github.com/1024pix/pix-editor/pull/180) [BUMP] Update dependency mocha to v10 (api).
+- [#177](https://github.com/1024pix/pix-editor/pull/177) [BUMP] Update dependency @1024pix/pix-ui to v38 (pix-editor).
+- [#176](https://github.com/1024pix/pix-editor/pull/176) [BUMP] Update dependency pino to v8 (api).
+- [#160](https://github.com/1024pix/pix-editor/pull/160) [BUMP] Update dependency sinon to v15 (scripts).
+- [#161](https://github.com/1024pix/pix-editor/pull/161) [BUMP] Update dependency eslint to v8.
+- [#142](https://github.com/1024pix/pix-editor/pull/142) [BUMP] Update dependency airtable to v0.12.1 (scripts).
+- [#163](https://github.com/1024pix/pix-editor/pull/163) [BUMP] Update dependency googleapis to v123 (api).
+- [#140](https://github.com/1024pix/pix-editor/pull/140) [BUMP] Update dependency airtable to ^0.12.0 (api).
+- [#169](https://github.com/1024pix/pix-editor/pull/169) [BUMP] Update dependency node to v16.20.1.
+- [#168](https://github.com/1024pix/pix-editor/pull/168) [BUMP] Lock file maintenance (dossier racine).
+- [#166](https://github.com/1024pix/pix-editor/pull/166) [BUMP] Update dependency p-queue to v7 (pix-editor).
+- [#164](https://github.com/1024pix/pix-editor/pull/164) [BUMP] Update dependency ember-cli-showdown to v7 (pix-editor).
+- [#162](https://github.com/1024pix/pix-editor/pull/162) [BUMP] Update dependency ember-cli-app-version to v6 (pix-editor).
+- [#159](https://github.com/1024pix/pix-editor/pull/159) [BUMP] Update dependency sinon to v15 (api).
+- [#158](https://github.com/1024pix/pix-editor/pull/158) [BUMP] Update browser-tools orb to v1.4.3 (.circleci).
+- [#157](https://github.com/1024pix/pix-editor/pull/157) [BUMP] Update dependency dotenv to v16 (api).
+- [#152](https://github.com/1024pix/pix-editor/pull/152) [BUMP] Update dependency mocha to v8.4.0 (scripts).
+- [#156](https://github.com/1024pix/pix-editor/pull/156) [BUMP] Update dependency showdown to v2 (api).
+
+## v3.86.1 (26/07/2023)
+
+
+### :building_construction: Tech
+- [#132](https://github.com/1024pix/pix-editor/pull/132) [TECH] Prévenir le commit de secrets (PIX-8664).
+
+### :bug: Correction
+- [#154](https://github.com/1024pix/pix-editor/pull/154) [BUGFIX] Réordonner l'affichage des compétences (PIX-8760).
+
+### :coffee: Autre
+- [#150](https://github.com/1024pix/pix-editor/pull/150) [BUMP] Update dependency eslint to v7.32.0.
+- [#151](https://github.com/1024pix/pix-editor/pull/151) [BUMP] Update dependency nodemon to v3 (api).
+- [#148](https://github.com/1024pix/pix-editor/pull/148) [BUMP] Update dependency cypress to v6.9.1 (end-to-end-tests).
+- [#147](https://github.com/1024pix/pix-editor/pull/147) [BUMP] Update dependency chai to v4.3.7 (scripts).
+- [#144](https://github.com/1024pix/pix-editor/pull/144) [BUMP] Update dependency axios to ^0.27.0 (scripts).
+- [#145](https://github.com/1024pix/pix-editor/pull/145) [BUMP] Lock file maintenance (api).
+- [#146](https://github.com/1024pix/pix-editor/pull/146) [BUMP] Update browser-tools orb to v1.4.2 (.circleci).
+- [#139](https://github.com/1024pix/pix-editor/pull/139) [BUMP] Update dependency @1024pix/ember-testing-library to ^0.7.0 (pix-editor).
+- [#143](https://github.com/1024pix/pix-editor/pull/143) [BUMP] Update dependency axios to ^0.27.0 (api).
+
+## v3.86.0 (25/07/2023)
+
+
+### :rocket: Amélioration
+- [#127](https://github.com/1024pix/pix-editor/pull/127) [FEATURE] Pouvoir modifier un test statique existant (PIX-7797).
+- [#123](https://github.com/1024pix/pix-editor/pull/123) [FEATURE] Pouvoir créer un nouveau test statique (PIX-3635).
+
+### :building_construction: Tech
+- [#124](https://github.com/1024pix/pix-editor/pull/124) [TECH] Migration vers embroider.
+- [#134](https://github.com/1024pix/pix-editor/pull/134) [TECH] Désactivation de google analytics dans TUI editor.
+- [#133](https://github.com/1024pix/pix-editor/pull/133) [TECH] Réparer CircleCI (Fail sur Install ChromeDriver).
+
+### :bug: Correction
+- [#131](https://github.com/1024pix/pix-editor/pull/131) [BUGFIX] design des pages de tests statiques revu (PIX-8586).
+- [#128](https://github.com/1024pix/pix-editor/pull/128) [BUGFIX] L'utilisateur ne pouvait plus créer de domaine (PIX-8612).
+- [#126](https://github.com/1024pix/pix-editor/pull/126) [BUGFIX] Le lien de PixEditor vers Airtable est invalide.
+
+### :coffee: Autre
+- [#136](https://github.com/1024pix/pix-editor/pull/136) [BUMP] Update dependency qs to v6.10.3 [SECURITY].
+- [#137](https://github.com/1024pix/pix-editor/pull/137) [BUMP] Update dependency tough-cookie to v4.1.3 [SECURITY].
+- [#135](https://github.com/1024pix/pix-editor/pull/135) Configure Renovate.
+
+## v3.85.0 (10/07/2023)
+
+
+### :rocket: Amélioration
+- [#125](https://github.com/1024pix/pix-editor/pull/125) [FEATURE] Empêcher les utilisateurs avec un rôle "readpixonly" d'accéder aux fonctionnalités liées aux tests statiques (PIX-8589).
+
+## v3.84.0 (10/07/2023)
+
+
+### :rocket: Amélioration
+- [#121](https://github.com/1024pix/pix-editor/pull/121) [FEATURE] Pouvoir voir le détail d'un test statique sur PixEditor (PIX-7796).
+- [#117](https://github.com/1024pix/pix-editor/pull/117) [FEATURE] Pouvoir voir la liste paginée des tests statiques sur PixEditor (PIX-7795).
+
+## v3.83.0 (28/06/2023)
+
+
+### :building_construction: Tech
+- [#116](https://github.com/1024pix/pix-editor/pull/116) [TECH] Mettre en place la double lecture de tests statiques lors de la création de la release (PIX-8383).
+
+### :bug: Correction
+- [#118](https://github.com/1024pix/pix-editor/pull/118) [BUGFIX] La "Duplication vers" d'un acquis pour le passer d'un sujet à un autre ne fonctionne pas (PIX-8485).
+
+## v3.82.1 (16/06/2023)
+
+
+### :rocket: Amélioration
+- [#112](https://github.com/1024pix/pix-editor/pull/112) [FEATURE] Reprise de données pour afficher aléatoirement les anciens QCU/QCM (PIX-7876).
+- [#114](https://github.com/1024pix/pix-editor/pull/114) [FEATURE] Créer la table des tests statiques (PIX-7792).
+- [#113](https://github.com/1024pix/pix-editor/pull/113) [FEATURE] Renvoit le fichier index.html en cas de 404 (PIX-8350).
+
+### :bug: Correction
+- [#115](https://github.com/1024pix/pix-editor/pull/115) [BUGFIX] Le focus sur les modales est défaillant depuis la mise à jour de PixUi (PIX-8351).
+
+## v3.82.0 (13/06/2023)
+
+
+### :rocket: Amélioration
+- [#111](https://github.com/1024pix/pix-editor/pull/111) [FEATURE] Afficher les domaines ordonnés par code (PIX-8216).
+
+### :building_construction: Tech
+- [#109](https://github.com/1024pix/pix-editor/pull/109) [TECH] Mettre à jour PixUi à la version v35.0.0.
+- [#110](https://github.com/1024pix/pix-editor/pull/110) [TECH] Mettre en place ember-simple-auth sur PixEditor (PIX-8232).
+- [#108](https://github.com/1024pix/pix-editor/pull/108) [TECH] Mise à jour ember v4 (PIX-8190).
+
+## v3.81.0 (16/05/2023)
+
+
+### :rocket: Amélioration
+- [#107](https://github.com/1024pix/pix-editor/pull/107) [FEATURE] Permettre de choisir si on veut afficher aléatoirement les options des QCU/QCM (PIX-7737)
+
+## v3.80.0 (09/05/2023)
+
+
+### :building_construction: Tech
+- [#106](https://github.com/1024pix/pix-editor/pull/106) [TECH] Configurer le pool minimal de connexion à 0
+
+## v3.79.0 (04/05/2023)
+
+
+### :rocket: Amélioration
+- [#104](https://github.com/1024pix/pix-editor/pull/104) [FEATURE] Ajouté le nom de la compétence dans le résultat du check des URL (PIX-6042).
+
+### :building_construction: Tech
+- [#105](https://github.com/1024pix/pix-editor/pull/105) [TECH] Corriger l'ajout d'une source contenant une apostrophe (PIX-7819) 
+- [#101](https://github.com/1024pix/pix-editor/pull/101) [TECH] Renseigner la bonne version de node dans le fichier .nvmrc
+
+### :bug: Correction
+- [#103](https://github.com/1024pix/pix-editor/pull/103) [BUGFIX] Les logs système ne sont pas désactivables
+
+## v3.78.0 (31/03/2023)
+
+
+### :rocket: Amélioration
+- [#98](https://github.com/1024pix/pix-editor/pull/98) [FEATURE] Mise a jour de la doc de rédaction de proposition sur pix éditor (PIX-7520).
+
+### :building_construction: Tech
+- [#99](https://github.com/1024pix/pix-editor/pull/99) [TECH] Vérifier la validités des liens contenu dans les bonnes réponses des épreuves (PIX-6190).
+- [#100](https://github.com/1024pix/pix-editor/pull/100) [TECH] Passage à node 16
+
+## v3.77.0 (20/03/2023)
+
+
+### :rocket: Amélioration
+- [#97](https://github.com/1024pix/pix-editor/pull/97) [FEATURE] Add default selected value on geographic field (PIX-3590)
+- [#96](https://github.com/1024pix/pix-editor/pull/96) [FEATURE] Mise à jour des dépendances
+
+### :building_construction: Tech
+- [#95](https://github.com/1024pix/pix-editor/pull/95) [TECH] Active des règles de lint SCSS d'espacement
+
+## v3.76.0 (17/02/2023)
+
+
+### :rocket: Amélioration
+- [#90](https://github.com/1024pix/pix-editor/pull/90) [FEATURE] Ajouter la date de péremption d'une épreuve (PIX-7022)
+- [#89](https://github.com/1024pix/pix-editor/pull/89) [FEATURE] Ajouter la date d'archivage dans Airtable à l'archivage d'une épreuve (PIX-6543)
+- [#88](https://github.com/1024pix/pix-editor/pull/88) [FEATURE] Ajouter la date de validation d'une épreuve dans la table d'Airtable "Epreuves" (PIX-6541)
+
+### :building_construction: Tech
+- [#93](https://github.com/1024pix/pix-editor/pull/93) [TECH] Exposer les nouveaux champs de Airtable depuis LCMS (PIX-7121).
+- [#94](https://github.com/1024pix/pix-editor/pull/94) [TECH] Mise en place de Stylelint
+- [#91](https://github.com/1024pix/pix-editor/pull/91) [TECH] Récupérer les dates de : mise en production, archivage et obsolescence des épreuves en se basant sur le Changelog et les releases (PIX-5210)
+- [#83](https://github.com/1024pix/pix-editor/pull/83) [TECH] Ne pas lancer le check des URL lors de la création d'une release en dehors de l'environnement de production (PIX-6878).
+
+## v3.75.1 (23/01/2023)
+
+
+### :building_construction: Tech
+- [#85](https://github.com/1024pix/pix-editor/pull/85) [TECH] Déplace la création de release dans un process dédié
+
+## v3.75.0 (23/01/2023)
+
+
+### :bug: Correction
+- [#82](https://github.com/1024pix/pix-editor/pull/82) [BUGFIX] Réparer la génération du fichier pdf de présentation du référentiel (PIX-6781).
+
+### :coffee: Autre
+- [#77](https://github.com/1024pix/pix-editor/pull/77) [CLEANUP] Supprime la compatibilité avec l'ancien format pour les textes traduits
+
 ## v3.74.0 (27/12/2022)
 
 
@@ -228,7 +576,7 @@
 
 
 ### :rocket: Enhancement
-- [#16](https://github.com/1024pix/pix-editor/pull/16) [FEATURE] Ajout de contexte sur l'extract des URLs du référentiel (PIX-4154)
+- [#16](https://github.com/1024pix/pix-editor/pull/16) [FEATURE] Ajout de contexte sur l'extractFromAirtable des URLs du référentiel (PIX-4154)
 
 ### :bug: Bug fix
 - [#17](https://github.com/1024pix/pix-editor/pull/17) [BUGFIX] Corrige la concurrence de vérifications des URLs

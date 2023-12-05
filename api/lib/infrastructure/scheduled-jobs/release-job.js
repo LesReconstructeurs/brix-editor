@@ -1,13 +1,20 @@
-const createQueue = require('./create-queue');
-const config = require('../../config');
-const logger = require('../logger');
-const releaseRepository = require('../repositories/release-repository.js');
-const SlackNotifier = require('../notifications/SlackNotifier');
-const learningContentNotification = require('../../domain/services/learning-content-notification');
-const checkUrlsJob = require('./check-urls-job');
+import { createQueue } from './create-queue.js';
+import * as config from '../../config.js';
+import { logger } from '../logger.js';
+import { fileURLToPath } from 'node:url';
 
-const queue = createQueue('create-release-queue');
-queue.process(createRelease);
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+export const queue = createQueue('create-release-queue');
+const cjsFile = __dirname + '/release-job-processor.cjs';
+const esmFile = __dirname + '/release-job-processor.js';
+if (process.env.NODE_ENV === 'test') {
+  import(esmFile).then((module) => {
+    queue.process(module.default);
+  });
+} else {
+  queue.process(cjsFile);
+}
 
 const releaseJobOptions = {
   attempts: config.scheduledJobs.attempts,
@@ -20,24 +27,7 @@ const releaseJobOptions = {
   },
 };
 
-async function createRelease(job) {
-  try {
-    const releaseId = await releaseRepository.create();
-    if (_isSlackNotificationGloballyEnabled() && job.data.slackNotification === true) {
-      await learningContentNotification.notifyReleaseCreationSuccess(new SlackNotifier(config.notifications.slack.webhookUrl));
-    }
-    logger.info(`Periodic release created with id ${releaseId}`);
-    checkUrlsJob.start();
-    return releaseId;
-  } catch (error) {
-    if (_isSlackNotificationGloballyEnabled()) {
-      await learningContentNotification.notifyReleaseCreationFailure(error.message, new SlackNotifier(config.notifications.slack.webhookUrl));
-    }
-    logger.error(error);
-  }
-}
-
-function schedule() {
+export function schedule() {
   if (!_isScheduledReleaseEnabled()) {
     logger.info('Scheduled release is not enabled - check `CREATE_RELEASE_TIME` and `REDIS_URL` variables');
     return;
@@ -48,13 +38,3 @@ function schedule() {
 function _isScheduledReleaseEnabled() {
   return config.scheduledJobs.createReleaseTime && config.scheduledJobs.redisUrl;
 }
-
-function _isSlackNotificationGloballyEnabled() {
-  return config.notifications.slack.enable;
-}
-
-module.exports = {
-  schedule,
-  queue,
-  createRelease,
-};

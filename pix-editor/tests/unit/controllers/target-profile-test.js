@@ -96,7 +96,7 @@ module('Unit | Controller | target-profile', function (hooks) {
     };
     area1.framework = framework;
     area2.framework = framework;
-    controller = this.owner.lookup('controller:target-profile');
+    controller = this.owner.lookup('controller:authenticated.target-profile');
   });
 
   test('it should set tube-level arguments for production tube', function (assert) {
@@ -124,7 +124,7 @@ module('Unit | Controller | target-profile', function (hooks) {
       controller.displayTubeLevel];
 
     tubeLevelArguments.forEach((value, i) => {
-      assert.equal(value, expectedResult[i]);
+      assert.strictEqual(value, expectedResult[i]);
     });
   });
 
@@ -257,7 +257,7 @@ module('Unit | Controller | target-profile', function (hooks) {
       const result = controller._determineFileType(data);
 
       // then
-      assert.equal(result, 'orga');
+      assert.strictEqual(result, 'orga');
     });
 
     test('should return editor when the file is an array of objects', function(assert) {
@@ -268,7 +268,7 @@ module('Unit | Controller | target-profile', function (hooks) {
       const result = controller._determineFileType(data);
 
       // then
-      assert.equal(result, 'editor');
+      assert.strictEqual(result, 'editor');
     });
   });
 

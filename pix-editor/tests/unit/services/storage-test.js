@@ -1,10 +1,19 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
-import { mockAuthService } from '../../mock-auth';
+import Service from '@ember/service';
 
 module('Unit | Service | storage', function(hooks) {
   setupTest(hooks);
+
+  hooks.beforeEach(function() {
+    class sessionServiceStub extends Service {
+      get data() {
+        return { authenticated: { apiKey: 'someApiKey' } };
+      }
+    }
+    this.owner.register('service:session', sessionServiceStub);
+  });
 
   module('uploadFile', function() {
     test('it should use file.name when filename is not defined', async function(assert) {
@@ -175,7 +184,7 @@ module('Unit | Service | storage', function(hooks) {
       const uploadedUrl = await storageService.cloneFile('https://dl.ovh.com/bucket/NOW.txt', date, fetch);
 
       // then
-      assert.equal(uploadedUrl, 'https://dl.ovh.com/bucket/NOW2/NOW.txt');
+      assert.strictEqual(uploadedUrl, 'https://dl.ovh.com/bucket/NOW2/NOW.txt');
       assert.ok(fetch.calledOnce);
       assert.deepEqual(fetch.args[0], [uploadedUrl, {
         method: 'PUT',
@@ -198,7 +207,7 @@ module('Unit | Service | storage', function(hooks) {
       const uploadedUrl = await storageService.cloneFile('https://dl.ovh.com/bucket/NOW/test.txt', date, fetch);
 
       // then
-      assert.equal(uploadedUrl, 'https://dl.ovh.com/bucket/NOW2/test.txt');
+      assert.strictEqual(uploadedUrl, 'https://dl.ovh.com/bucket/NOW2/test.txt');
       assert.ok(fetch.calledOnce);
       assert.deepEqual(fetch.args[0], [uploadedUrl, {
         method: 'PUT',
@@ -225,7 +234,7 @@ module('Unit | Service | storage', function(hooks) {
       const uploadedUrl = await storageService.cloneFile('https://dl.ovh.com/bucket/NOW.txt', date, fetch);
 
       // then
-      assert.equal(uploadedUrl, 'https://dl.ovh.com/bucket/NOW2/NOW.txt');
+      assert.strictEqual(uploadedUrl, 'https://dl.ovh.com/bucket/NOW2/NOW.txt');
       assert.ok(fetch.calledTwice);
       assert.deepEqual(fetch.args[0], [uploadedUrl, {
         method: 'PUT',
@@ -283,12 +292,7 @@ module('Unit | Service | storage', function(hooks) {
     });
   });
 
-  module('getStorageToken', function(hooks) {
-    const apiKey = 'apiKey';
-
-    hooks.beforeEach(function() {
-      mockAuthService.call(this, apiKey);
-    });
+  module('getStorageToken', function() {
 
     test('it calls api', async function(assert) {
       const storageService = this.owner.lookup('service:storage');
@@ -307,10 +311,10 @@ module('Unit | Service | storage', function(hooks) {
       assert.deepEqual(fetch.args[0], ['/api/file-storage-token', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer apiKey',
+          'Authorization': 'Bearer someApiKey',
         }
       }]);
-      assert.equal(fetchedToken, token);
+      assert.strictEqual(fetchedToken, token);
     });
 
     test('it returns the previously stored token', async function(assert) {
@@ -323,7 +327,7 @@ module('Unit | Service | storage', function(hooks) {
       const fetchedToken = await storageService.getStorageToken(false, fetch);
 
       assert.ok(fetch.notCalled);
-      assert.equal(fetchedToken, token);
+      assert.strictEqual(fetchedToken, token);
     });
 
     test('it always calls the api when renew is true', async function(assert) {
@@ -345,10 +349,10 @@ module('Unit | Service | storage', function(hooks) {
       assert.deepEqual(fetch.args[0], ['/api/file-storage-token', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer apiKey',
+          'Authorization': 'Bearer someApiKey',
         }
       }]);
-      assert.equal(fetchedToken, token);
+      assert.strictEqual(fetchedToken, token);
     });
   });
 

@@ -1,4 +1,6 @@
-exports.register = async function(server) {
+import * as config from '../../config.js';
+
+export async function register(server) {
   server.route([
     {
       method: 'GET',
@@ -8,13 +10,12 @@ exports.register = async function(server) {
       },
       handler: {
         directory: {
-          path: 'public/pix-editor',
+          path: `${config.hapi.publicDir}/pix-editor`,
           redirectToSlash: true
         }
       }
     }
   ]);
-};
+}
 
-exports.name = 'static-api';
-
+export const name = 'static-api';

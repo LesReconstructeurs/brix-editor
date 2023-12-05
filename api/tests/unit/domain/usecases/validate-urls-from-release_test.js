@@ -1,13 +1,14 @@
-const chai = require('chai');
-const expect = chai.expect;
-const {
+import { describe, expect, it } from 'vitest';
+import {
   findUrlsInMarkdown,
   findUrlsInstructionFromChallenge,
   findUrlsProposalsFromChallenge,
+  findUrlsSolutionFromChallenge,
+  findUrlsSolutionToDisplayFromChallenge,
   findUrlsFromChallenges,
   getLiveChallenges,
   findUrlsFromTutorials
-} = require('../../../../lib/domain/usecases/validate-urls-from-release');
+} from '../../../../lib/domain/usecases/validate-urls-from-release.js';
 
 describe('Check urls from release', function() {
   describe('#findUrlsInMarkdown', function() {
@@ -84,16 +85,76 @@ describe('Check urls from release', function() {
     });
   });
 
+  describe('#findUrlsSolutionFromChallenge', function() {
+    it('should not find url solution from a challenge when there is no url', function() {
+      const challenge = {
+        id: 'challenge123',
+        solution: 'solution',
+      };
+      const urls = findUrlsSolutionFromChallenge(challenge);
+
+      expect(urls).to.deep.equal([]);
+    });
+
+    it('should find url solution from a challenge', function() {
+      const challenge = {
+        id: 'challenge123',
+        solution: 'solution [link](https://example.com/)',
+      };
+      const urls = findUrlsSolutionFromChallenge(challenge);
+
+      expect(urls).to.deep.equal(['https://example.com/']);
+    });
+  });
+
+  describe('#findUrlsSolutionToDisplayFromChallenge', function() {
+    it('should not find url solution to display from a challenge when there is no url', function() {
+      const challenge = {
+        id: 'challenge123',
+        solutionToDisplay: 'solution to display',
+      };
+      const urls = findUrlsSolutionToDisplayFromChallenge(challenge);
+
+      expect(urls).to.deep.equal([]);
+    });
+
+    it('should find url solution to display from a challenge', function() {
+      const challenge = {
+        id: 'challenge123',
+        solutionToDisplay: 'solution to display [link](https://example.com/)',
+      };
+      const urls = findUrlsSolutionToDisplayFromChallenge(challenge);
+
+      expect(urls).to.deep.equal(['https://example.com/']);
+    });
+  });
+
   describe('#findUrlsFromChallenges', function() {
     it('should find urls from challenges', function() {
       const release = {
+        competences: [
+          {
+            id: 'competence1',
+            name_i18n: {
+              fr: 'competence 1.1'
+            }
+          }
+        ],
+        tubes: [
+          {
+            id: 'tube1',
+            competenceId: 'competence1'
+          }
+        ],
         skills: [
           {
             id: 'skill1',
+            tubeId: 'tube1',
             name: '@mySkill1'
           },
           {
             id: 'skill2',
+            tubeId: 'tube1',
             name: '@mySkill2'
           }
         ]
@@ -103,6 +164,7 @@ describe('Check urls from release', function() {
           id: 'challenge1',
           instruction: 'instructions [link](https://example.net/) further instructions [other_link](https://other_example.net/)',
           proposals: 'proposals [link](https://example.net/)',
+          solution: 'solution [link](https://solution_example.net/)',
           skillId: 'skill1',
           status: 'validé',
         },
@@ -112,13 +174,22 @@ describe('Check urls from release', function() {
           proposals: 'proposals [link](https://example.fr/)',
           skillId: undefined,
           status: 'validé',
+        },
+        {
+          id: 'challenge3',
+          instruction: 'instructions',
+          solutionToDisplay: 'solution to display https://solutionToDisplay_example.org/',
+          skillId: 'skill2',
+          status: 'validé',
         }
       ];
 
       const expectedOutput = [
-        { id: '@mySkill1;challenge1;validé', url: 'https://example.net/' },
-        { id: '@mySkill1;challenge1;validé', url: 'https://other_example.net/' },
-        { id: ';challenge2;validé', url: 'https://example.fr/' },
+        { id: 'competence 1.1;@mySkill1;challenge1;validé', url: 'https://example.net/' },
+        { id: 'competence 1.1;@mySkill1;challenge1;validé', url: 'https://other_example.net/' },
+        { id: 'competence 1.1;@mySkill1;challenge1;validé', url: 'https://solution_example.net/' },
+        { id: ';;challenge2;validé', url: 'https://example.fr/' },
+        { id: 'competence 1.1;@mySkill2;challenge3;validé', url: 'https://solutionToDisplay_example.org/' },
       ];
 
       const urls = findUrlsFromChallenges(challenges, release);
@@ -167,14 +238,40 @@ describe('Check urls from release', function() {
   describe('#findUrlsFromTutorials', function() {
     it('should find urls from tutorials', function() {
       const release = {
+        competences: [
+          {
+            id: 'competence1',
+            name_i18n: {
+              fr: 'competence 1.1'
+            }
+          },
+          {
+            id: 'competence2',
+            name_i18n: {
+              fr: 'competence 1.2'
+            }
+          }
+        ],
+        tubes: [
+          {
+            id: 'tube1',
+            competenceId: 'competence1'
+          },
+          {
+            id: 'tube2',
+            competenceId: 'competence2'
+          }
+        ],
         skills: [
           {
             name: '@mySkill1',
+            tubeId: 'tube1',
             tutorialIds: ['tutorial1', 'tutorial3'],
             learningMoreTutorialIds: [],
           },
           {
             name: '@mySkill2',
+            tubeId: 'tube2',
             tutorialIds: [],
             learningMoreTutorialIds: ['tutorial3'],
           },
@@ -197,15 +294,15 @@ describe('Check urls from release', function() {
 
       const expectedOutput = [
         {
-          id: '@mySkill1;tutorial1',
+          id: 'competence 1.1;@mySkill1;tutorial1',
           url: 'https://example.net/'
         },
         {
-          id: ';tutorial2',
+          id: ';;tutorial2',
           url: 'https://example.net/'
         },
         {
-          id: '@mySkill1 @mySkill2;tutorial3',
+          id: 'competence 1.1 competence 1.2;@mySkill1 @mySkill2;tutorial3',
           url: 'https://example.net/'
         }
       ];

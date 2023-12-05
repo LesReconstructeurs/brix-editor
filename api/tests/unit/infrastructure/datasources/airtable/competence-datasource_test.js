@@ -1,6 +1,9 @@
-const { expect, domainBuilder, airtableBuilder } = require('../../../../test-helper');
-const competenceDatasource = require('../../../../../lib/infrastructure/datasources/airtable/competence-datasource');
-const AirtableRecord = require('airtable').Record;
+import { describe, expect, it } from 'vitest';
+import { domainBuilder, airtableBuilder } from '../../../../test-helper.js';
+import { competenceDatasource } from '../../../../../lib/infrastructure/datasources/airtable/competence-datasource.js';
+import airtable from 'airtable';
+
+const { Record: AirtableRecord } = airtable;
 
 describe('Unit | Infrastructure | Datasource | Airtable | CompetenceDatasource', () => {
 
@@ -8,7 +11,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | CompetenceDatasource',
 
     it('should create a Competence from the AirtableRecord', () => {
       // given
-      const expectedCompetence = domainBuilder.buildCompetenceAirtableDataObject();
+      const expectedCompetence = domainBuilder.buildCompetenceDatasourceObject();
       const airtableCompetence = airtableBuilder.factory.buildCompetence(expectedCompetence);
       const competenceRecord = new AirtableRecord('Competence', airtableCompetence.id, airtableCompetence);
 

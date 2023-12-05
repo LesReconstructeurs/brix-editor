@@ -1,7 +1,8 @@
-const nock = require('nock');
-const _ = require('lodash');
-const { expect, databaseBuilder, domainBuilder, generateAuthorizationHeader, airtableBuilder } = require('../../../test-helper');
-const createServer = require('../../../../server');
+import { beforeEach, describe, expect, it } from 'vitest';
+import nock from 'nock';
+import _ from 'lodash';
+import {  databaseBuilder, domainBuilder, generateAuthorizationHeader, airtableBuilder } from '../../../test-helper.js';
+import { createServer } from '../../../../server.js';
 
 const challengeAirtableFields = [
   'id persistant',
@@ -43,6 +44,11 @@ const challengeAirtableFields = [
   'Difficulté calculée',
   'Discrimination calculée',
   'updated_at',
+  'created_at',
+  'validated_at',
+  'archived_at',
+  'made_obsolete_at',
+  'shuffled',
 ];
 
 describe('Acceptance | Controller | challenges-controller', () => {
@@ -56,6 +62,7 @@ describe('Acceptance | Controller | challenges-controller', () => {
     delete body.fields['Discrimination calculée'];
     delete body.fields['Difficulté calculée'];
     delete body.fields['updated_at'];
+    delete body.fields['created_at'];
     if (deleteId) {
       delete body.id;
     }
@@ -71,7 +78,7 @@ describe('Acceptance | Controller | challenges-controller', () => {
 
     it('should return challenges', async () => {
       // Given
-      const challenge = domainBuilder.buildChallengeAirtableDataObject({ id: 'my id' });
+      const challenge = domainBuilder.buildChallengeDatasourceObject({ id: 'my id' });
 
       const airtableChallenges = [
         airtableBuilder.factory.buildChallenge(challenge),
@@ -136,6 +143,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
               'auto-reply': false,
               focusable: false,
               'updated-at': '2021-10-04',
+              'validated-at': '2023-02-02T14:17:30.820Z',
+              'archived-at': '2023-03-03T10:47:05.555Z',
+              'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+              shuffled: false,
             },
             relationships: {
               skill: {
@@ -160,8 +171,8 @@ describe('Acceptance | Controller | challenges-controller', () => {
 
     it('should filter challenges by id', async () => {
       // Given
-      const challenge1 = domainBuilder.buildChallengeAirtableDataObject({ id: '1' });
-      const challenge2 = domainBuilder.buildChallengeAirtableDataObject({ id: '2' });
+      const challenge1 = domainBuilder.buildChallengeDatasourceObject({ id: '1' });
+      const challenge2 = domainBuilder.buildChallengeDatasourceObject({ id: '2' });
       const airtableCall = nock('https://api.airtable.com')
         .get('/v0/airtableBaseValue/Epreuves')
         .query({
@@ -227,6 +238,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
               'auto-reply': false,
               focusable: false,
               'updated-at': '2021-10-04',
+              'validated-at': '2023-02-02T14:17:30.820Z',
+              'archived-at': '2023-03-03T10:47:05.555Z',
+              'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+              shuffled: false,
             },
             relationships: {
               skill: {
@@ -281,6 +296,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
               'auto-reply': false,
               focusable: false,
               'updated-at': '2021-10-04',
+              'validated-at': '2023-02-02T14:17:30.820Z',
+              'archived-at': '2023-03-03T10:47:05.555Z',
+              'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+              shuffled: false,
             },
             relationships: {
               skill: {
@@ -370,7 +389,7 @@ describe('Acceptance | Controller | challenges-controller', () => {
 
     it('should return given challenge', async () => {
       // Given
-      const challenge = domainBuilder.buildChallengeAirtableDataObject({ id: 'recChallengeId1' });
+      const challenge = domainBuilder.buildChallengeDatasourceObject({ id: 'recChallengeId1' });
       const airtableChallenge = airtableBuilder.factory.buildChallenge(challenge);
       const airtableCall = nock('https://api.airtable.com')
         .get('/v0/airtableBaseValue/Epreuves')
@@ -434,6 +453,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
             'auto-reply': false,
             focusable: false,
             'updated-at': '2021-10-04',
+            'validated-at': '2023-02-02T14:17:30.820Z',
+            'archived-at': '2023-03-03T10:47:05.555Z',
+            'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+            shuffled: false,
           },
           relationships: {
             skill: {
@@ -493,7 +516,7 @@ describe('Acceptance | Controller | challenges-controller', () => {
 
     it('should create a challenge', async () => {
       // Given
-      const challenge = domainBuilder.buildChallengeAirtableDataObject({ id: 'challengeId' });
+      const challenge = domainBuilder.buildChallengeDatasourceObject({ id: 'challengeId' });
       const expectedBodyChallenge = _removeReadonlyFields(airtableBuilder.factory.buildChallenge(challenge), true);
       const expectedBody = { records: [expectedBodyChallenge] };
 
@@ -546,6 +569,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
               'auto-reply': challenge.autoReply,
               focusable: challenge.focusable,
               'updated-at': '2021-10-04',
+              'validated-at': '2023-02-02T14:17:30.820Z',
+              'archived-at': '2023-03-03T10:47:05.555Z',
+              'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+              shuffled: false,
             },
             relationships: {
               skill: {
@@ -607,6 +634,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
             'auto-reply': false,
             focusable: false,
             'updated-at': '2021-10-04',
+            'validated-at': '2023-02-02T14:17:30.820Z',
+            'archived-at': '2023-03-03T10:47:05.555Z',
+            'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+            shuffled: false,
           },
           relationships: {
             skill: {
@@ -630,7 +661,7 @@ describe('Acceptance | Controller | challenges-controller', () => {
 
     it('should invalidate the cache on the PIX API', async () => {
       // Given
-      const challenge = domainBuilder.buildChallengeAirtableDataObject({ id: 'recChallengeId' });
+      const challenge = domainBuilder.buildChallengeDatasourceObject({ id: 'recChallengeId' });
       const expectedChallengeRelease = JSON.parse(JSON.stringify(domainBuilder.buildChallengeForRelease({
         ...challenge,
         illustrationUrl: null,
@@ -705,6 +736,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
               area: challenge.area,
               'auto-reply': challenge.autoReply,
               focusable: challenge.focusable,
+              'validated-at': challenge.validatedAt,
+              'archived-at': challenge.archivedAt,
+              'made-obsolete-at': challenge.madeObsoleteAt,
+              shuffled: false,
             },
             relationships: {
               skill: {
@@ -719,11 +754,11 @@ describe('Acceptance | Controller | challenges-controller', () => {
       });
 
       // Then
+      expect(response).to.have.property('statusCode', 201);
       expect(attachmentsScope.isDone()).to.be.true;
       expect(apiTokenScope.isDone()).to.be.true;
       expect(airtableCall.isDone()).to.be.true;
       expect(apiCacheScope.isDone()).to.be.true;
-      expect(response.statusCode).to.equal(201);
     });
   });
 
@@ -736,7 +771,7 @@ describe('Acceptance | Controller | challenges-controller', () => {
 
     it('should update a challenge', async () => {
       // Given
-      const challenge = domainBuilder.buildChallengeAirtableDataObject({ id: 'recChallengeId' });
+      const challenge = domainBuilder.buildChallengeDatasourceObject({ id: 'recChallengeId' });
       const airtableChallenge = airtableBuilder.factory.buildChallenge(challenge);
       const expectedBodyChallenge = _removeReadonlyFields(airtableChallenge);
       const expectedBody = { records: [expectedBodyChallenge] };
@@ -791,6 +826,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
               'auto-reply': challenge.autoReply,
               focusable: challenge.focusable,
               'updated-at': '2021-10-04',
+              'validated-at': '2023-02-02T14:17:30.820Z',
+              'archived-at': '2023-03-03T10:47:05.555Z',
+              'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+              shuffled: false,
             },
             relationships: {
               skill: {
@@ -852,6 +891,10 @@ describe('Acceptance | Controller | challenges-controller', () => {
             'auto-reply': false,
             focusable: false,
             'updated-at': '2021-10-04',
+            'validated-at': '2023-02-02T14:17:30.820Z',
+            'archived-at': '2023-03-03T10:47:05.555Z',
+            'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+            shuffled: false,
           },
           relationships: {
             skill: {

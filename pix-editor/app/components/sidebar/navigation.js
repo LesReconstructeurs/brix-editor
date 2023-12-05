@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import Sentry from '@sentry/ember';
+import * as Sentry from '@sentry/ember';
 
 export default class SidebarNavigationComponent extends Component {
   addFrameworkLabel = 'Créer un nouveau référentiel';
@@ -97,7 +97,7 @@ export default class SidebarNavigationComponent extends Component {
       });
       this.notify.message('Référentiel créé');
       this.displayNewFrameworkPopIn = false;
-      router.transitionTo('index');
+      router.transitionTo('authenticated');
     } catch (error) {
       Sentry.captureException(error);
       console.log(error);

@@ -1,13 +1,16 @@
-const { expect, domainBuilder, airtableBuilder } = require('../../../../test-helper');
-const tubeDatasource = require('../../../../../lib/infrastructure/datasources/airtable/tube-datasource');
-const AirtableRecord = require('airtable').Record;
+import { describe, expect, it } from 'vitest';
+import { domainBuilder, airtableBuilder } from '../../../../test-helper.js';
+import { tubeDatasource } from '../../../../../lib/infrastructure/datasources/airtable/tube-datasource.js';
+import airtable from 'airtable';
+
+const { Record: AirtableRecord } = airtable;
 
 describe('Unit | Infrastructure | Datasource | Airtable | TubeDatasource', () => {
   describe('#fromAirTableObject', () => {
 
     it('should create a Tube from the AirtableRecord', () => {
       // given
-      const expectedTube = domainBuilder.buildTubeAirtableDataObject();
+      const expectedTube = domainBuilder.buildTubeDatasourceObject();
       const airtableTube = airtableBuilder.factory.buildTube(expectedTube);
       const tubeRecord = new AirtableRecord('Tube', airtableTube.id, airtableTube);
 

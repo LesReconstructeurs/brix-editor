@@ -2,13 +2,16 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
+    requireConfigFile: false,
     ecmaVersion: 2018,
     sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true
-    }
+    babelOptions: {
+      plugins: [
+        ['@babel/plugin-proposal-decorators', { version: 'legacy' }],
+      ],
+    },
   },
   plugins: [
     'ember',
@@ -36,6 +39,7 @@ module.exports = {
     'space-infix-ops':'error',
     'object-curly-spacing':['error', 'always'],
     'ember/no-controller-access-in-routes': ['error', { 'allowControllerFor': true }],
+    'qunit/require-expect': ['error', 'except-simple'],
   },
   overrides: [
     // node files
@@ -48,8 +52,10 @@ module.exports = {
         'blueprints/*/index.js',
         'config/**/*.js',
         'lib/*/index.js',
+        'playwright.config.js',
         'scripts/*.js',
-        'server/**/*.js'
+        'server/**/*.js',
+        'tests/e2e/**/*.js'
       ],
       parserOptions: {
         sourceType: 'script'
@@ -58,13 +64,7 @@ module.exports = {
         browser: false,
         node: true
       },
-      plugins: ['node'],
-      extends: ['plugin:node/recommended'],
-      rules: {
-        // this can be removed once the following is fixed
-        // https://github.com/mysticatea/eslint-plugin-node/issues/77
-        'node/no-unpublished-require': 'off'
-      }
+      extends: ['plugin:n/recommended'],
     }
   ]
 };

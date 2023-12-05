@@ -1,7 +1,9 @@
-import Mirage, { createServer, discoverEmberDataModels, applyEmberDataSerializers } from 'ember-cli-mirage';
-import { getDsSerializers, getDsModels } from 'ember-cli-mirage/ember-data';
+import { applyEmberDataSerializers, discoverEmberDataModels } from 'ember-cli-mirage';
+import { createServer } from 'miragejs';
+import { getDsModels, getDsSerializers } from 'ember-cli-mirage/ember-data';
+import slice from 'lodash/slice';
 
-export function makeServer(config) {
+export default function makeServer(config) {
   const finalConfig = {
     ...config,
     models: { ...discoverEmberDataModels(), ...config.models },
@@ -16,8 +18,8 @@ function routes() {
 
   this.namespace = 'api';
 
-  this.get('/users/me', ({ users }, request) => _response(request, users.first()));
-  this.get('/config', ({ configs }, request) => _response(request, configs.first()));
+  this.get('/users/me', ({ users }) => users.first());
+  this.get('/config', ({ configs }) => configs.first());
 
   this.post('/airtable/content/Attachments', (schema, request) => {
     const payload = JSON.parse(request.requestBody);
@@ -26,11 +28,11 @@ function routes() {
     return _serializeModel(createdAttachment, 'attachment');
   });
 
-  this.get('/airtable/content/Referentiel', (schema, request) => {
+  this.get('/airtable/content/Referentiel', (schema) => {
     const records = schema.frameworks.all().models.map((framework) => {
       return _serializeModel(framework, 'framework');
     });
-    return _response(request, { records });
+    return { records };
   });
 
   this.post('/airtable/content/Referentiel', (schema, request) => {
@@ -40,11 +42,11 @@ function routes() {
     return _serializeModel(createdFramework, 'framework');
   });
 
-  this.get('/airtable/content/Domaines', (schema, request) => {
+  this.get('/airtable/content/Domaines', (schema) => {
     const records = schema.areas.all().models.map((area) => {
       return _serializeModel(area, 'area');
     });
-    return _response(request, { records });
+    return { records };
   });
 
   this.get('/airtable/content/Domaines/:id', (schema, request) => {
@@ -59,11 +61,11 @@ function routes() {
     return _serializeModel(createdArea, 'area');
   });
 
-  this.get('/airtable/content/Competences', (schema, request) => {
+  this.get('/airtable/content/Competences', (schema) => {
     const records = schema.competences.all().models.map((competence) => {
       return _serializeModel(competence, 'competence');
     });
-    return _response(request, { records });
+    return { records };
   });
 
   this.get('/airtable/content/Competences/:id', (schema, request) => {
@@ -91,11 +93,11 @@ function routes() {
     return _serializeModel(theme, 'theme');
   });
 
-  this.get('/airtable/content/Thematiques', (schema, request) => {
+  this.get('/airtable/content/Thematiques', (schema) => {
     const records = schema.themes.all().models.map(theme => {
       return _serializeModel(theme, 'theme');
     });
-    return _response(request, { records });
+    return { records };
   });
 
   this.post('/airtable/content/Thematiques', (schema, request) => {
@@ -110,11 +112,11 @@ function routes() {
     return _serializeModel(tube, 'tube');
   });
 
-  this.get('/airtable/content/Tubes', (schema, request) => {
+  this.get('/airtable/content/Tubes', (schema) => {
     const records = schema.tubes.all().models.map(tube => {
       return _serializeModel(tube, 'tube');
     });
-    return _response(request, { records });
+    return { records };
   });
 
   this.post('/airtable/content/Tubes', (schema, request) => {
@@ -129,11 +131,11 @@ function routes() {
     return _serializeModel(skill, 'skill');
   });
 
-  this.get('/airtable/content/Acquis', (schema, request) => {
+  this.get('/airtable/content/Acquis', (schema) => {
     const records = schema.skills.all().models.map((skill) => {
       return _serializeModel(skill, 'skill');
     });
-    return _response(request, { records });
+    return { records };
   });
 
   this.post('/airtable/content/Acquis', (schema, request) => {
@@ -160,6 +162,15 @@ function routes() {
       deleted: true,
       id: request.params.id,
     };
+  });
+
+  this.get('/airtable/changelog/Notes', (schema) => {
+    schema.notes.create();
+    schema.notes.create();
+    const records = schema.notes.all().models.map((note) => {
+      return _serializeModel(note, 'note');
+    });
+    return { records };
   });
 
   this.post('/airtable/changelog/Notes', (schema, request) => {
@@ -213,18 +224,67 @@ function routes() {
 
     return challenge;
   });
-}
 
-function _response(request, responseData) {
-  return _isRequestAuthorized(request) ? responseData : unauthorizedErrorResponse;
-}
+  this.get('/static-course-summaries', function(schema, request) {
+    const queryParams = request.queryParams;
+    const {
+      'filter[isActive]': isActiveFilter,
+    } = queryParams;
+    let allStaticCourseSummaries;
+    if (isActiveFilter === '') {
+      allStaticCourseSummaries = schema.staticCourseSummaries.all().models;
+    } else {
+      const isActive = isActiveFilter === 'true';
+      allStaticCourseSummaries = schema.staticCourseSummaries.where({ isActive }).models;
+    }
+    const rowCount = allStaticCourseSummaries.length;
 
-function _isRequestAuthorized(request) {
-  const apiKey = request.requestHeaders && request.requestHeaders['Authorization'];
-  return apiKey === 'Bearer valid-api-key';
-}
+    const pagination = _getPaginationFromQueryParams(queryParams);
+    const paginatedStaticCourseSummaries = _applyPagination(allStaticCourseSummaries, pagination);
 
-const unauthorizedErrorResponse = new Mirage.Response(401);
+    const json = this.serialize({ modelName: 'static-course-summary', models: paginatedStaticCourseSummaries }, 'static-course-summary');
+    json.meta = {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      rowCount,
+      pageCount: Math.ceil(rowCount / pagination.pageSize),
+    };
+    return json;
+  });
+
+  this.get('/static-courses/:id');
+
+  this.post('/static-courses', function(schema, request) {
+    const attributes = JSON.parse(request.requestBody).data.attributes;
+    return schema.create('static-course', {
+      id: 'newStaticCourseId',
+      name: attributes.name,
+      description: attributes.description,
+      challengeSummaryIds: attributes['challenge-ids'],
+    });
+  });
+
+  this.put('/static-courses/:id', function(schema, request) {
+    const attributes = JSON.parse(request.requestBody).data.attributes;
+    const staticCourse = schema.staticCourses.find(request.params.id);
+    staticCourse.update({
+      name: attributes.name,
+      description: attributes.description,
+      challengeSummaryIds: attributes['challenge-ids'],
+    });
+    return staticCourse;
+  });
+
+  this.put('/static-courses/:id/deactivate', function(schema, request) {
+    const attributes = JSON.parse(request.requestBody).data.attributes;
+    const staticCourse = schema.staticCourses.find(request.params.id);
+    staticCourse.update({
+      isActive: false,
+      deactivationReason: attributes.reason,
+    });
+    return staticCourse;
+  });
+}
 
 function _serializeModel(instance, modelName) {
   const serializer = new (getDsSerializers()[modelName]);
@@ -264,4 +324,18 @@ function _deserializePayload(payload, modelName) {
   }
   payload.id = payload.fields[serializer.primaryKey];
   return payload;
+}
+
+function _getPaginationFromQueryParams(queryParams) {
+  return {
+    pageSize: parseInt(queryParams['page[size]']) || 10,
+    page: parseInt(queryParams['page[number]']) || 1,
+  };
+}
+
+function _applyPagination(data, { page, pageSize }) {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+
+  return slice(data, start, end);
 }

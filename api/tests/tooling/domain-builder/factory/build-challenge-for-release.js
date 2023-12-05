@@ -1,6 +1,6 @@
-const ChallengeForRelease = require('../../../../lib/domain/models/ChallengeForRelease');
+import { ChallengeForRelease } from '../../../../lib/domain/models/release/ChallengeForRelease.js';
 
-module.exports = function buildChallengeForRelease({
+export function buildChallengeForRelease({
   id = 'recwWzTquPlvIl4So',
   instruction = 'Les moteurs de recherche affichent certains liens en raison d\'un accord commercial.\n\nDans quels encadrés se trouvent ces liens ?',
   alternativeInstruction = '',
@@ -29,6 +29,8 @@ module.exports = function buildChallengeForRelease({
   attachments,
   illustrationAlt = 'alt illu',
   illustrationUrl = 'url illu',
+  shuffled = false,
+  alternativeVersion = 2
 } = {}) {
 
   return new ChallengeForRelease({
@@ -60,5 +62,7 @@ module.exports = function buildChallengeForRelease({
     attachments,
     illustrationAlt,
     illustrationUrl,
+    shuffled,
+    alternativeVersion
   });
-};
+}

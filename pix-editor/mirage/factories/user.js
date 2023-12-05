@@ -1,10 +1,21 @@
-import { Factory } from 'ember-cli-mirage';
+import { Factory } from 'miragejs';
 
 export default Factory.extend({
 
-  name: '',
-  access: 'admin',
-  trigram: '',
+  name() {
+    return 'Jean Admin';
+  },
 
+  access() {
+    return 'admin';
+  },
+
+  trigram() {
+    return 'JAD';
+  },
+
+  apiKey() {
+    return 'default-valid-api-key';
+  }
 });
 

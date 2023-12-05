@@ -1,5 +1,6 @@
-const { expect, databaseBuilder, knex, domainBuilder, airtableBuilder } = require('../../../test-helper');
-const releaseRepository = require('../../../../lib/infrastructure/repositories/release-repository');
+import { afterEach, beforeEach, describe, describe as context, expect, it } from 'vitest';
+import { databaseBuilder, knex, domainBuilder, airtableBuilder } from '../../../test-helper.js';
+import { create, getLatestRelease, getRelease, getCurrentContent } from '../../../../lib/infrastructure/repositories/release-repository.js';
 
 describe('Integration | Repository | release-repository', function() {
   describe('#create', function() {
@@ -11,10 +12,12 @@ describe('Integration | Repository | release-repository', function() {
     it('should save current content as a new release', async function() {
       // Given
       const currentContent = { some: 'property' };
-      const fakeGetCurrentContent = async function() { return currentContent; };
+      const fakeGetCurrentContent = async function() {
+        return currentContent;
+      };
 
       // When
-      await releaseRepository.create(fakeGetCurrentContent);
+      await create(fakeGetCurrentContent);
 
       // Then
       const releasesInDb = await knex('releases');
@@ -24,11 +27,23 @@ describe('Integration | Repository | release-repository', function() {
 
     it('should return the saved release ID', async function() {
       // Given
-      const currentContentDTO = { areas: [], challenges: [], competences: [], courses: [], frameworks: [], skills: [], thematics: [], tubes: [], tutorials: [] };
-      const fakeGetCurrentContent = async function() { return currentContentDTO; };
+      const currentContentDTO = {
+        areas: [],
+        challenges: [],
+        competences: [],
+        courses: [],
+        frameworks: [],
+        skills: [],
+        thematics: [],
+        tubes: [],
+        tutorials: []
+      };
+      const fakeGetCurrentContent = async function() {
+        return currentContentDTO;
+      };
 
       // When
-      const releaseId = await releaseRepository.create(fakeGetCurrentContent);
+      const releaseId = await create(fakeGetCurrentContent);
 
       // Then
       const [releasesInDbId] = await knex('releases').pluck('id');
@@ -39,19 +54,41 @@ describe('Integration | Repository | release-repository', function() {
   describe('#getLatestRelease', function() {
     it('should return content of newest created release', async function() {
       // Given
-      const newestReleaseContentDTO = { areas: [], challenges: [], competences: [], courses: [], frameworks: [], skills: [], thematics: [], tubes: [], tutorials: [] };
+      const newestReleaseContentDTO = {
+        areas: [],
+        challenges: [],
+        competences: [],
+        courses: [],
+        frameworks: [],
+        skills: [],
+        thematics: [],
+        tubes: [],
+        tutorials: []
+      };
       const oldestReleaseContentDTO = { some: 'old-property' };
-      databaseBuilder.factory.buildRelease({ id: 1, createdAt: new Date('2021-02-02'), content: newestReleaseContentDTO });
-      databaseBuilder.factory.buildRelease({ id: 2, createdAt: new Date('2020-01-01'), content: oldestReleaseContentDTO });
+      databaseBuilder.factory.buildRelease({
+        id: 1,
+        createdAt: new Date('2021-02-02'),
+        content: newestReleaseContentDTO
+      });
+      databaseBuilder.factory.buildRelease({
+        id: 2,
+        createdAt: new Date('2020-01-01'),
+        content: oldestReleaseContentDTO
+      });
       await databaseBuilder.commit();
 
       // When
-      const latestRelease = await releaseRepository.getLatestRelease();
+      const latestRelease = await getLatestRelease();
 
       // Then
       const expectedContent = domainBuilder.buildContentForRelease(newestReleaseContentDTO);
-      const expectedRelease = domainBuilder.buildDomainRelease({ id: 1, createdAt: new Date('2021-02-02'), content: expectedContent });
-      expect(latestRelease).to.deepEqualInstance(expectedRelease);
+      const expectedRelease = domainBuilder.buildDomainRelease({
+        id: 1,
+        createdAt: new Date('2021-02-02'),
+        content: expectedContent
+      });
+      expect(latestRelease).toEqualInstance(expectedRelease);
     });
   });
 
@@ -59,19 +96,41 @@ describe('Integration | Repository | release-repository', function() {
     it('should return content of given release', async function() {
       // Given
       const otherReleaseContentDTO = { some: 'property' };
-      const expectedReleaseContentDTO = { areas: [], challenges: [], competences: [], courses: [], frameworks: [], skills: [], thematics: [], tubes: [], tutorials: [] };
+      const expectedReleaseContentDTO = {
+        areas: [],
+        challenges: [],
+        competences: [],
+        courses: [],
+        frameworks: [],
+        skills: [],
+        thematics: [],
+        tubes: [],
+        tutorials: []
+      };
 
-      databaseBuilder.factory.buildRelease({ id: 11, createdAt: new Date('2021-01-01'), content: otherReleaseContentDTO });
-      databaseBuilder.factory.buildRelease({ id: 12, createdAt: new Date('2020-01-01'), content: expectedReleaseContentDTO });
+      databaseBuilder.factory.buildRelease({
+        id: 11,
+        createdAt: new Date('2021-01-01'),
+        content: otherReleaseContentDTO
+      });
+      databaseBuilder.factory.buildRelease({
+        id: 12,
+        createdAt: new Date('2020-01-01'),
+        content: expectedReleaseContentDTO
+      });
       await databaseBuilder.commit();
 
       // When
-      const givenRelease = await releaseRepository.getRelease(12);
+      const givenRelease = await getRelease(12);
 
       // Then
       const expectedContent = domainBuilder.buildContentForRelease(expectedReleaseContentDTO);
-      const expectedRelease = domainBuilder.buildDomainRelease({ id: 12, createdAt: new Date('2020-01-01'), content: expectedContent });
-      expect(givenRelease).to.deepEqualInstance(expectedRelease);
+      const expectedRelease = domainBuilder.buildDomainRelease({
+        id: 12,
+        createdAt: new Date('2020-01-01'),
+        content: expectedContent
+      });
+      expect(givenRelease).toEqualInstance(expectedRelease);
     });
 
     context('with a rich and realistic content', function() {
@@ -79,16 +138,24 @@ describe('Integration | Repository | release-repository', function() {
         // Given
         _mockRichAirtableContent();
         const richCurrentContentDTO = _getRichCurrentContentDTO();
-        databaseBuilder.factory.buildRelease({ id: 1, createdAt: new Date('2021-01-01'), content: richCurrentContentDTO });
+        databaseBuilder.factory.buildRelease({
+          id: 1,
+          createdAt: new Date('2021-01-01'),
+          content: richCurrentContentDTO
+        });
         await databaseBuilder.commit();
 
         // When
-        const givenRelease = await releaseRepository.getRelease(1);
+        const givenRelease = await getRelease(1);
 
         // Then
         const expectedContent = domainBuilder.buildContentForRelease(richCurrentContentDTO);
-        const expectedRelease = domainBuilder.buildDomainRelease({ id: 1, createdAt: new Date('2021-01-01'), content: expectedContent });
-        expect(givenRelease).to.deepEqualInstance(expectedRelease);
+        const expectedRelease = domainBuilder.buildDomainRelease({
+          id: 1,
+          createdAt: new Date('2021-01-01'),
+          content: expectedContent
+        });
+        expect(givenRelease).toEqualInstance(expectedRelease);
       });
     });
   });
@@ -96,12 +163,54 @@ describe('Integration | Repository | release-repository', function() {
   describe('#getCurrentContent', function() {
 
     beforeEach(function() {
-      _mockRichAirtableContent();
+      const { competences } = _mockRichAirtableContent();
+
+      for (const competence of competences) {
+        if (competence.name_i18n?.fr) {
+          databaseBuilder.factory.buildTranslation({
+            key: `competence.${competence.id}.name`,
+            locale: 'fr',
+            value: competence.name_i18n.fr,
+          });
+        }
+        if (competence.name_i18n?.en) {
+          databaseBuilder.factory.buildTranslation({
+            key: `competence.${competence.id}.name`,
+            locale: 'en',
+            value: competence.name_i18n.en,
+          });
+        }
+        if (competence.description_i18n?.fr) {
+          databaseBuilder.factory.buildTranslation({
+            key: `competence.${competence.id}.description`,
+            locale: 'fr',
+            value: competence.description_i18n.fr,
+          });
+        }
+        if (competence.description_i18n?.en) {
+          databaseBuilder.factory.buildTranslation({
+            key: `competence.${competence.id}.description`,
+            locale: 'en',
+            value: competence.description_i18n.en,
+          });
+        }
+      }
+
+      databaseBuilder.factory.buildStaticCourse({
+        id: 'course1PG',
+        name: 'course1PG name',
+        description: 'course1PG description',
+        isActive: false,
+        challengeIds: 'challenge121212,challenge211113',
+        createdAt: new Date('2020-01-01'),
+        updatedAt: new Date('2020-01-02'),
+      });
+      return databaseBuilder.commit();
     });
 
     it('should return current content as DTO', async function() {
       // When
-      const currentContentDTO = await releaseRepository.getCurrentContent();
+      const currentContentDTO = await getCurrentContent();
 
       // Then
       const expectedReleaseContentDTO = _getRichCurrentContentDTO();
@@ -141,7 +250,7 @@ function _mockRichAirtableContent() {
     color: 'area2 color',
     frameworkId: 'frameworkA',
   });
-  const airtableCompetence11 = airtableBuilder.factory.buildCompetence({
+  const competence11 = {
     id: 'competence11',
     index: 'competence11 index',
     name_i18n: {
@@ -156,9 +265,9 @@ function _mockRichAirtableContent() {
     skillIds: ['skill11111', 'skill11112'],
     thematicIds: ['thematic111', 'thematic112'],
     origin: 'FrameworkA',
-    fullName: 'competence11 fullName',
-  });
-  const airtableCompetence12 = airtableBuilder.factory.buildCompetence({
+  };
+  const airtableCompetence11 = airtableBuilder.factory.buildCompetence(competence11);
+  const competence12 = {
     id: 'competence12',
     index: 'competence12 index',
     name_i18n: {
@@ -173,9 +282,9 @@ function _mockRichAirtableContent() {
     skillIds: ['skill12121'],
     thematicIds: ['thematic121'],
     origin: 'FrameworkA',
-    fullName: 'competence12 fullName',
-  });
-  const airtableCompetence21 = airtableBuilder.factory.buildCompetence({
+  };
+  const airtableCompetence12 = airtableBuilder.factory.buildCompetence(competence12);
+  const competence21 = {
     id: 'competence21',
     index: 'competence21 index',
     name_i18n: {
@@ -190,8 +299,8 @@ function _mockRichAirtableContent() {
     skillIds: ['skill21111'],
     thematicIds: ['thematic211'],
     origin: 'FrameworkA',
-    fullName: 'competence21 fullName',
-  });
+  };
+  const airtableCompetence21 = airtableBuilder.factory.buildCompetence(competence21);
   const airtableThematic111 = airtableBuilder.factory.buildThematic({
     id: 'thematic111',
     name_i18n: {
@@ -423,6 +532,7 @@ function _mockRichAirtableContent() {
     delta: 1.1,
     alpha: 2.2,
     updatedAt: 'challenge121211 updatedAt',
+    shuffled: false,
   });
   const airtableChallenge121212 = airtableBuilder.factory.buildChallenge({
     id: 'challenge121212',
@@ -464,6 +574,7 @@ function _mockRichAirtableContent() {
     delta: 123,
     alpha: 456,
     updatedAt: 'challenge121212 updatedAt',
+    shuffled: true,
   });
   const airtableChallenge211111 = airtableBuilder.factory.buildChallenge({
     id: 'challenge211111',
@@ -505,6 +616,7 @@ function _mockRichAirtableContent() {
     delta: 100,
     alpha: 200,
     updatedAt: 'challenge211111 updatedAt',
+    shuffled: false,
   });
   const airtableChallenge211112 = airtableBuilder.factory.buildChallenge({
     id: 'challenge211112',
@@ -546,6 +658,7 @@ function _mockRichAirtableContent() {
     delta: 100,
     alpha: 200,
     updatedAt: 'challenge211112 updatedAt',
+    shuffled: false,
   });
   const airtableChallenge211113 = airtableBuilder.factory.buildChallenge({
     id: 'challenge211113',
@@ -587,6 +700,7 @@ function _mockRichAirtableContent() {
     delta: 100,
     alpha: 200,
     updatedAt: 'challenge211113 updatedAt',
+    shuffled: false,
   });
   const airtableTutorial1 = airtableBuilder.factory.buildTutorial({
     id: 'tutorial1',
@@ -609,24 +723,6 @@ function _mockRichAirtableContent() {
     locale: 'fr-fr',
     tutorialForSkills: 'tutorial2 tutorialForSkills',
     furtherInformation: 'tutorial2 furtherInformation',
-  });
-  const airtableCourse1 = airtableBuilder.factory.buildCourse({
-    id: 'course1',
-    name: 'course1 name',
-    description: 'course1 description',
-    competences: ['competence12'],
-    challenges: ['challenge121211'],
-    imageUrl: 'course1 imageUrl',
-    adaptive: 'course1 adaptive',
-  });
-  const airtableCourse2 = airtableBuilder.factory.buildCourse({
-    id: 'course2',
-    name: 'course2 name',
-    description: 'course2 description',
-    competences: ['competence12', 'competence21'],
-    challenges: ['challenge121211', 'challenge211111'],
-    imageUrl: 'course2 imageUrl',
-    adaptive: 'course2 adaptive',
   });
   const airtableAttachment1 = airtableBuilder.factory.buildAttachment({
     id: 'attachment1',
@@ -659,9 +755,12 @@ function _mockRichAirtableContent() {
     skills: [airtableSkill11111, airtableSkill11112, airtableSkill12121, airtableSkill21111],
     challenges: [airtableChallenge121211, airtableChallenge121212, airtableChallenge211111, airtableChallenge211112, airtableChallenge211113],
     tutorials: [airtableTutorial1, airtableTutorial2],
-    courses: [airtableCourse1, airtableCourse2],
     attachments: [airtableAttachment1, airtableAttachment2, airtableAttachment3],
   });
+
+  return {
+    competences: [competence11, competence12, competence21],
+  };
 }
 
 function _getRichCurrentContentDTO() {
@@ -908,7 +1007,7 @@ function _getRichCurrentContentDTO() {
         en: 'tube2111 practicalTitleEnUs',
       },
       practicalDescription_i18n: {
-        fr : 'tube2111 practicalDescriptionFrFr',
+        fr: 'tube2111 practicalDescriptionFrFr',
         en: 'tube2111 practicalDescriptionEnUs',
       },
       competenceId: 'competence21',
@@ -1018,6 +1117,8 @@ function _getRichCurrentContentDTO() {
       attachments: ['attachment1 url', 'attachment2 url'],
       illustrationUrl: null,
       illustrationAlt: null,
+      shuffled: false,
+      alternativeVersion: 'challenge121211 alternativeVersion',
     },
     {
       id: 'challenge121212',
@@ -1047,6 +1148,8 @@ function _getRichCurrentContentDTO() {
       alpha: 456,
       illustrationUrl: null,
       illustrationAlt: null,
+      shuffled: true,
+      alternativeVersion: 'challenge121212 alternativeVersion',
     },
     {
       id: 'challenge211111',
@@ -1077,6 +1180,8 @@ function _getRichCurrentContentDTO() {
       attachments: ['attachment3 url'],
       illustrationUrl: null,
       illustrationAlt: null,
+      shuffled: false,
+      alternativeVersion: 'challenge211111 alternativeVersion',
     },
     {
       id: 'challenge211112',
@@ -1106,6 +1211,8 @@ function _getRichCurrentContentDTO() {
       alpha: 200,
       illustrationUrl: null,
       illustrationAlt: null,
+      shuffled: false,
+      alternativeVersion: 'challenge211112 alternativeVersion',
     },
     {
       id: 'challenge211113',
@@ -1135,24 +1242,18 @@ function _getRichCurrentContentDTO() {
       alpha: 200,
       illustrationUrl: null,
       illustrationAlt: null,
+      shuffled: false,
+      alternativeVersion: 'challenge211113 alternativeVersion',
     },
   ];
   const expectedCourseDTOs = [
     {
-      id: 'course1',
-      name: 'course1 name',
-      description: 'course1 description',
-      competences: ['competence12'],
-      challenges: [ 'challenge121211'],
-      imageUrl: 'course1 imageUrl',
-    },
-    {
-      id: 'course2',
-      name: 'course2 name',
-      description: 'course2 description',
+      id: 'course1PG',
+      name: 'course1PG name',
+      description: 'course1PG description',
+      isActive: false,
       competences: ['competence12', 'competence21'],
-      challenges: ['challenge211111', 'challenge121211'],
-      imageUrl: 'course2 imageUrl',
+      challenges: ['challenge121212', 'challenge211113'],
     },
   ];
   const expectedTutorialDTOs = [

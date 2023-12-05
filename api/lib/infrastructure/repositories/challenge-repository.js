@@ -1,21 +1,23 @@
-const challengesDataSource = require('../datasources/airtable/challenge-datasource');
+import { challengeDatasource } from '../datasources/airtable/index.js';
 
-module.exports = {
-  async filter(params = {}) {
-    if (params.filter && params.filter.ids) {
-      return challengesDataSource.filter(params);
-    }
-    if (params.filter && params.filter.search) {
-      return challengesDataSource.search(params);
-    }
-    return challengesDataSource.list(params);
-  },
+export async function filter(params = {}) {
+  if (params.filter && params.filter.ids) {
+    return challengeDatasource.filter(params);
+  }
+  if (params.filter && params.filter.search) {
+    return challengeDatasource.search(params);
+  }
+  return challengeDatasource.list(params);
+}
 
-  create(challenge) {
-    return challengesDataSource.create(challenge);
-  },
+export function create(challenge) {
+  return challengeDatasource.create(challenge);
+}
 
-  update(challenge) {
-    return challengesDataSource.update(challenge);
-  },
-};
+export function update(challenge) {
+  return challengeDatasource.update(challenge);
+}
+
+export async function getAllIdsIn(challengeIds) {
+  return challengeDatasource.getAllIdsIn(challengeIds);
+}

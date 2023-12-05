@@ -29,11 +29,11 @@ export default class PrototypesList extends SortedList {
     'instruction':'string',
     'type':'string',
     'status':'string'
-  }
+  };
 
   @action
   selectRow(row) {
-    this.router.transitionTo('competence.prototypes.single', row);
+    this.router.transitionTo('authenticated.competence.prototypes.single', row);
   }
 
 }

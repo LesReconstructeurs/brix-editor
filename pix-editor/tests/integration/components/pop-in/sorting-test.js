@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { click, render, findAll } from '@ember/test-helpers';
-import { drag }  from 'ember-sortable/test-support/helpers';
+import { click, findAll, render } from '@ember/test-helpers';
+import { drag } from 'ember-sortable/test-support';
 import { hbs } from 'ember-cli-htmlbars';
 import EmberObject from '@ember/object';
 import sinon from 'sinon';
@@ -55,8 +55,8 @@ module('Integration | Component | pop-in/sorting', function(hooks) {
     await drag('mouse', draggableItem, () => { return { dy: draggableItem.offsetHeight * 2 + 1, dx: undefined };});
 
     // then
-    assert.equal(modelToSort2.index, 2);
-    assert.equal(modelToSort3.index, 1);
+    assert.strictEqual(modelToSort2.index, 2);
+    assert.strictEqual(modelToSort3.index, 1);
   });
 
   test('it should trigger approve action', async function (assert) {

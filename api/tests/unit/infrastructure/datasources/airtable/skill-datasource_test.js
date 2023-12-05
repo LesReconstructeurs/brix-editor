@@ -1,6 +1,9 @@
-const { expect, domainBuilder, airtableBuilder } = require('../../../../test-helper');
-const skillDatasource = require('../../../../../lib/infrastructure/datasources/airtable/skill-datasource');
-const AirtableRecord = require('airtable').Record;
+import { describe, expect, it } from 'vitest';
+import { domainBuilder, airtableBuilder } from '../../../../test-helper.js';
+import { skillDatasource } from '../../../../../lib/infrastructure/datasources/airtable/skill-datasource.js';
+import airtable from 'airtable';
+
+const { Record: AirtableRecord } = airtable;
 
 describe('Unit | Infrastructure | Datasource | Airtable | SkillDatasource', () => {
 
@@ -8,7 +11,7 @@ describe('Unit | Infrastructure | Datasource | Airtable | SkillDatasource', () =
 
     it('should create a Skill from the AirtableRecord', () => {
       // given
-      const expectedSkill = domainBuilder.buildSkillAirtableDataObject();
+      const expectedSkill = domainBuilder.buildSkillDatasourceObject();
       const airtableSkill = airtableBuilder.factory.buildSkill(expectedSkill);
       const skillRecord = new AirtableRecord('Acquis', airtableSkill.id, airtableSkill);
 

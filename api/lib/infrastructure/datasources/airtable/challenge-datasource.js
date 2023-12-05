@@ -1,9 +1,9 @@
-const datasource = require('./datasource');
-const airtable = require('../../airtable');
-const { LOCALE_TO_LANGUAGE_MAP } = require('../../../domain/constants');
-const _ = require('lodash');
+import { datasource } from './datasource.js';
+import { findRecords } from '../../airtable.js';
+import { LOCALE_TO_LANGUAGE_MAP } from '../../../domain/constants.js';
+import _ from 'lodash';
 
-module.exports = datasource.extend({
+export const challengeDatasource = datasource.extend({
 
   modelName: 'Challenge',
 
@@ -49,6 +49,11 @@ module.exports = datasource.extend({
     'Difficulté calculée',
     'Discrimination calculée',
     'updated_at',
+    'created_at',
+    'validated_at',
+    'archived_at',
+    'made_obsolete_at',
+    'shuffled',
   ],
 
   fromAirTableObject(airtableRecord) {
@@ -102,7 +107,12 @@ module.exports = datasource.extend({
       area: airtableRecord.get('Géographie'),
       delta: parseFloat(airtableRecord.get('Difficulté calculée')),
       alpha: parseFloat(airtableRecord.get('Discrimination calculée')),
-      updatedAt: airtableRecord.get('updated_at')
+      updatedAt: airtableRecord.get('updated_at'),
+      validatedAt: airtableRecord.get('validated_at'),
+      archivedAt: airtableRecord.get('archived_at'),
+      madeObsoleteAt: airtableRecord.get('made_obsolete_at'),
+      createdAt: airtableRecord.get('created_at'),
+      shuffled: airtableRecord.get('shuffled'),
     };
   },
 
@@ -141,6 +151,10 @@ module.exports = datasource.extend({
         'Responsive': model.responsive,
         'Géographie': model.area,
         'files': model.files,
+        'validated_at': model.validatedAt,
+        'archived_at': model.archivedAt,
+        'made_obsolete_at': model.madeObsoleteAt,
+        'shuffled': model.shuffled,
       }
     };
     if (model.airtableId) {
@@ -157,16 +171,25 @@ module.exports = datasource.extend({
     if (params.page && params.page.size) {
       options.maxRecords = params.page.size;
     }
-    const airtableRawObjects = await airtable.findRecords(this.tableName, options);
+    const airtableRawObjects = await findRecords(this.tableName, options);
     return airtableRawObjects.map(this.fromAirTableObject);
   },
 
   async filterById(id) {
-    const airtableRawObjects = await airtable.findRecords(this.tableName, {
+    const airtableRawObjects = await findRecords(this.tableName, {
       filterByFormula : `{id persistant} = '${id}'`,
       maxRecords: 1,
     });
     return this.fromAirTableObject(airtableRawObjects[0]);
+  },
+
+  async getAllIdsIn(challengeIds) {
+    const options = {
+      fields: ['id persistant'],
+      filterByFormula: 'OR(' + challengeIds.map((id) => `'${id}' = {id persistant}`).join(',') + ')'
+    };
+    const airtableRawObjects = await findRecords(this.tableName, options);
+    return airtableRawObjects.map((airtableRawObject) => airtableRawObject.get('id persistant'));
   }
 });
 

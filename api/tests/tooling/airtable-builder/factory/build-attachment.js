@@ -1,10 +1,10 @@
-const buildAttachment = function buildAttachment({
-  id,
-  alt,
-  type,
-  url,
-  challengeId,
-}) {
+export function buildAttachment({
+  id = 'attid1',
+  alt = 'alt',
+  type = 'image/png',
+  url = 'url/to/attachment',
+  challengeId = 'challid1',
+} = {}) {
 
   return {
     id,
@@ -16,7 +16,4 @@ const buildAttachment = function buildAttachment({
       'type': type,
     },
   };
-};
-
-module.exports = buildAttachment;
-
+}

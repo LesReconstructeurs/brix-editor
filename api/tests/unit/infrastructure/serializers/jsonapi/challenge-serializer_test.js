@@ -1,11 +1,12 @@
-const { expect, domainBuilder } = require('../../../../test-helper');
-const serializer = require('../../../../../lib/infrastructure/serializers/jsonapi/challenge-serializer');
+import { describe, expect, it } from 'vitest';
+import { domainBuilder } from '../../../../test-helper.js';
+import { serialize, deserialize } from '../../../../../lib/infrastructure/serializers/jsonapi/challenge-serializer.js';
 
 describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
   describe('#serialize', () => {
     it('should serialize a Challenge', () => {
       // Given
-      const challenge = domainBuilder.buildChallengeAirtableDataObject();
+      const challenge = domainBuilder.buildChallengeDatasourceObject();
       const expectedSerializedChallenge = {
         data: {
           type: 'challenges',
@@ -42,7 +43,11 @@ describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
             area: 'France',
             'auto-reply': false,
             focusable: false,
-            'updated-at': '2021-10-04'
+            'updated-at': '2021-10-04',
+            'validated-at': '2023-02-02T14:17:30.820Z',
+            'archived-at': '2023-03-03T10:47:05.555Z',
+            'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+            shuffled: false,
           },
           relationships: {
             skill: {
@@ -62,7 +67,7 @@ describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
       };
 
       // When
-      const json = serializer.serialize(challenge);
+      const json = serialize(challenge);
 
       // Then
       expect(json).to.deep.equal(expectedSerializedChallenge);
@@ -72,7 +77,7 @@ describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
   describe('#deserialize', () => {
     it('should deserialize a Challenge', async () => {
       // Given
-      const expectedDeserializedChallenge = domainBuilder.buildChallengeAirtableDataObject();
+      const expectedDeserializedChallenge = domainBuilder.buildChallengeDatasourceObject();
       delete expectedDeserializedChallenge.skillId;
       delete expectedDeserializedChallenge.delta;
       delete expectedDeserializedChallenge.alpha;
@@ -114,6 +119,11 @@ describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
             focusable: false,
             competenceId: 'recsvLz0W2ShyfD63',
             'updated-at': '2021-10-04',
+            'created-at': '1986-07-14',
+            'validated-at': '2023-02-02T14:17:30.820Z',
+            'archived-at': '2023-03-03T10:47:05.555Z',
+            'made-obsolete-at': '2023-04-04T10:47:05.555Z',
+            'shuffled': false,
           },
           relationships: {
             skill: {
@@ -133,7 +143,7 @@ describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
       };
 
       // When
-      const challenge = await serializer.deserialize(json);
+      const challenge = await deserialize(json);
 
       // Then
       expect(challenge).to.deep.equal(expectedDeserializedChallenge);
@@ -155,7 +165,7 @@ describe('Unit | Serializer | JSONAPI | challenge-serializer', () => {
       };
 
       // When
-      const challenge = await serializer.deserialize(json);
+      const challenge = await deserialize(json);
 
       // Then
       expect(challenge.skills).to.deep.equal([]);

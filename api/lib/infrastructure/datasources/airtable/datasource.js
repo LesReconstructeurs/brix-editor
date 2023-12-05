@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const airtable = require('../../airtable');
+import _ from 'lodash';
+import * as airtable from '../../airtable.js';
 
 const _DatasourcePrototype = {
   path() {
@@ -12,10 +12,7 @@ const _DatasourcePrototype = {
       options.maxRecords = params.page.size;
     }
     const airtableRawObjects = await airtable.findRecords(this.tableName, options);
-    const listOfObjects = airtableRawObjects.map(this.fromAirTableObject);
-    return  listOfObjects.filter(function(row) {
-      return row !== undefined;
-    });
+    return airtableRawObjects.map(this.fromAirTableObject);
   },
 
   async filter({ filter: { ids } }) {
@@ -40,9 +37,25 @@ const _DatasourcePrototype = {
     const airtableRawObject = await airtable.updateRecord(this.tableName, airtableRequestBody);
     return this.fromAirTableObject(airtableRawObject);
   },
+
+  async upsert(models) {
+    const airtableRecords = models.map((model) => this.toAirTableObject(model));
+    const allAirtableRawObjects = [];
+    for (const chunk of chunks(airtableRecords, 10)) {
+      const airtableRawObjects = await airtable.upsertRecords(this.tableName, chunk, this.fieldsToMergeOn);
+      allAirtableRawObjects.push(...airtableRawObjects.map((airtableRawObject) => this.fromAirTableObject(airtableRawObject)));
+    }
+    return allAirtableRawObjects;
+  }
 };
 
-module.exports = {
+function* chunks(array, chunkSize) {
+  for (let i = 0; i < array.length; i += chunkSize) {
+    yield array.slice(i, i + chunkSize);
+  }
+}
+
+export const datasource = {
 
   extend(props) {
     props.sortField = props.sortField || 'id persistant';
