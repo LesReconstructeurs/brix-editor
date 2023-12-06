@@ -27,7 +27,6 @@ export const skillDatasource = datasource.extend({
   ],
 
   fromAirTableObject(airtableRecord) {
-
     return {
       id: airtableRecord.get('id persistant'),
       name: airtableRecord.get('Nom'),
@@ -44,7 +43,7 @@ export const skillDatasource = datasource.extend({
       tubeId: _.head(airtableRecord.get('Tube (id persistant)')),
       description: airtableRecord.get('Description'),
       level: airtableRecord.get('Level'),
-      internationalisation: airtableRecord.get('Internationalisation'),
+      internationalisation: airtableRecord.get('Internationalisation') || "France",
       version: airtableRecord.get('Version')
     };
   },

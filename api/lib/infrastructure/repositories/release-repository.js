@@ -129,21 +129,53 @@ async function _getCurrentContentFromAirtable(challenges) {
     tutorialDatasource.list(),
     translationRepository.list(),
   ]);
+  // CREATE RELEASE
+  /* CONTENU :
+    area = Domaines
+    attachment = Attachments
+    competence = Competences
+    frameworks = Referentiel
+    skills = Acquis
+    thematics = Thematiques
+    tubes = Tubes
+    tutorials = Tutoriels
+  */
+
+  const filteredTubes = tubes.filter(function(row) {
+    return ((row.competenceId !== undefined));
+  });
+
+  const filteredThematics = thematics.filter(function(row) {
+    return ((row.competenceId !== undefined) && (row.tubeIds !== undefined));
+  });
+
+  const filteredSkillsWaiting = skills.filter(function(row) {
+    return ((row.competenceId !== undefined) && (row.tubeId !== undefined));
+  });
+
+  const filteredCompetences = competences.filter(function(row) {
+    return ((row.skillIds !== undefined) && (row.thematicIds !== undefined));
+  });
+
   const transformChallenge = challengeTransformer.createChallengeTransformer({ attachments });
   const transformedChallenges = challenges.map(transformChallenge);
-  const transformedTubes = tubeTransformer.transform({ tubes, skills, challenges: transformedChallenges, thematics });
-  const filteredCompetences = competenceTransformer.filterCompetencesFields(competences);
-  const filteredSkills = skillTransformer.filterSkillsFields(skills);
+  const transformedTubes = tubeTransformer.transform({ tubes:filteredTubes, skills:filteredSkillsWaiting, challenges: transformedChallenges, thematics:filteredThematics });
+  const filteredCompetencesFinal = competenceTransformer.filterCompetencesFields(filteredCompetences);
+  const filteredSkills = skillTransformer.filterSkillsFields(filteredSkillsWaiting);
   const filteredTutorials = tutorialTransformer.filterTutorialsFields(tutorials);
 
-  filteredCompetences.forEach((competence) => competenceTranslations.hydrateReleaseObject(competence, translations));
+  filteredCompetencesFinal.forEach((competence) => competenceTranslations.hydrateReleaseObject(competence, translations));
+
+  const filteredTubesFinal = transformedTubes.filter(function(row) {
+    return row.skillIds.length > 0;
+  });
 
   return {
     frameworks,
     areas,
-    competences: filteredCompetences,
-    thematics,
-    tubes: transformedTubes,
+    competences: filteredCompetencesFinal,
+    thematics: filteredThematics,
+    tubes: filteredTubesFinal,
     skills: filteredSkills,
     challenges: transformedChallenges,
     tutorials: filteredTutorials,
